@@ -1,0 +1,6 @@
+TO DO:
+
+- Coding standards
+- Work division
+- Github
+
