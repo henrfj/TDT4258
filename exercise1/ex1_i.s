@@ -94,23 +94,13 @@ _reset:
 		str r2, [r1, #CMU_HFPERCLKEN0]
 
 		//Set high drive strength (A)
-		ldr r1, =GPIO_PA_BASE
+		ldr r5, =GPIO_PA_BASE
 		mov r2, #0x2
-		str r2, [r1, #GPIO_CTRL]
+		str r2, [r5, #GPIO_CTRL]
 
 		//Setting pins as output (A)
 		mov r2, #0x55555555
-		str r2, [r1, #GPIO_MODEH]
-		
-		//Turn all on (pin 8-15)
-		//now we overwrite pin 0-7 with 00, might want to change that later.
-		mov r2, #0xFF00
-		str r2, [r1, #GPIO_DOUT]
-
-		// Setting pins to low, test
-		mov r2, #0x8C00
-		str r2, [r1, #GPIO_DOUT]
-
+		str r2, [r5, #GPIO_MODEH]
 
 		// BUTTONS pins set as input
 		ldr r3, =GPIO_PC_BASE
@@ -121,13 +111,23 @@ _reset:
 		mov r4, #0xFF
 		str r4, [r3, #GPIO_DOUT]
 
-		loop: // POLLING
+		
+		//Sets what ports are allowed to interrupt
+		ldr r1, =GPIO_BASE
+		mov r2, #0x22222222
+		str r2, [r1, #GPIO_EXTIPSELL]
 
-			ldr r4, [r3, #GPIO_DIN]
-			lsl r4, r4, #8
-			str r4, [r1, #GPIO_DOUT]
+		//Enables interrupts on rise and fall values
+		mov r2, #0xff
+		str r2, [r1, #GPIO_EXTIFALL]
+		str r2, [r1, #GPIO_EXTIRISE]
+		str r2, [r1, #GPIO_IEN]
 
-			b loop
+		//Enable interrupt handling
+		ldr r6, =ISER0
+		mov r2, #0x0000802
+		str r2, [r6]
+
 
 
 	
@@ -140,8 +140,16 @@ _reset:
 	
         .thumb_func
 gpio_handler:  
+		
 
-	      b .  // do nothing
+		ldr r4, [r3, #GPIO_DIN]
+		lsl r4, r4, #8
+		str r4, [r5, #GPIO_DOUT]
+
+		ldr r2, [r1, #GPIO_IF]
+		str r2, [r1, #GPIO_IFC]
+
+	    b .  // do nothing
 	
 	/////////////////////////////////////////////////////////////////////////////
 	
