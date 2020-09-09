@@ -2,6 +2,7 @@
 #
 # Exercise 1, TDT4258
 
+SOURCE=ex1_i.s
 LD=arm-none-eabi-gcc
 AS=arm-none-eabi-as
 OBJCOPY=arm-none-eabi-objcopy
@@ -17,7 +18,7 @@ ex1.bin : ex1.elf
 ex1.elf : ex1.o 
 	${LD} -T ${LINKERSCRIPT} $^ -o $@ ${LDFLAGS} 
 
-ex1.o : ex1.s
+ex1.o : ${SOURCE}
 	${AS} ${ASFLAGS} $< -o $@
 
 .PHONY : upload

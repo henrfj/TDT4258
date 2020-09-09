@@ -121,7 +121,7 @@ _reset:
 		mov r4, #0xFF
 		str r4, [r3, #GPIO_DOUT]
 
-		loop:
+		loop: // POLLING
 
 			ldr r4, [r3, #GPIO_DIN]
 			lsl r4, r4, #8
