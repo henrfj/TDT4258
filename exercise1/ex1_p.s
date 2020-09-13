@@ -103,7 +103,7 @@ _reset:
 		str r2, [r1, #GPIO_MODEH]
 		
 		//Turn all on (pin 8-15)
-		//now we overwrite pin 0-7 with 00, might want to change that later.
+		//For now we overwrite pin 0-7 with 00, might want to change that later.
 		mov r2, #0xFF00
 		str r2, [r1, #GPIO_DOUT]
 
@@ -123,7 +123,9 @@ _reset:
 
 		loop: // POLLING
 
+			// Loading button status onto r4
 			ldr r4, [r3, #GPIO_DIN]
+			// Left shifting the input, to mach the required input of leds
 			lsl r4, r4, #8
 			str r4, [r1, #GPIO_DOUT]
 

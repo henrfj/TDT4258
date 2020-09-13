@@ -82,6 +82,8 @@
 	      .type   _reset, %function
         .thumb_func
 _reset: 
+		// All setup required for using leds and buttons.
+
 
 		//Activate clk on GPIO_CONTROLLER
 	    ldr r1, =CMU_BASE
@@ -107,25 +109,29 @@ _reset:
 		mov r4, #0x33333333
 		str r4, [r3, #GPIO_MODEL]
 
-		//Setting internal pull-ups
+		//Setting internal pull-ups for buttons
 		mov r4, #0xFF
 		str r4, [r3, #GPIO_DOUT]
 
 		
-		//Sets what ports are allowed to interrupt
+		//Sets what ports are allowed to interrupt (Buttons)
 		ldr r1, =GPIO_BASE
 		mov r2, #0x22222222
 		str r2, [r1, #GPIO_EXTIPSELL]
 
-		//Enables interrupts on rise and fall values
+		//Enables interrupts on rise and fall values, and interrupt generation
+		// from the GPIO
 		mov r2, #0xff
 		str r2, [r1, #GPIO_EXTIFALL]
 		str r2, [r1, #GPIO_EXTIRISE]
 		str r2, [r1, #GPIO_IEN]
 
-		//Enable interrupt handling
+		//Enable interrupt handling in M3 at all. Write 0x802 to ISERO
 		ldr r6, =ISER0
-		mov r2, #0x0000802
+		//mov r2, #0x802 wont cut it. 
+		//Only 8 bits (or more if the number is symmetric(?))
+		//Gets the value from the memory, using "assembler constant pool"
+		ldr r2, =#0x802
 		str r2, [r6]
 
 
@@ -133,19 +139,20 @@ _reset:
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
-  // GPIO handler
-  // The CPU will jump here when there is a GPIO interrupt
+  	// GPIO handler
+ 	// The CPU will jump here when there is a GPIO interrupt
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
         .thumb_func
 gpio_handler:  
 		
-
+		// Loading button status and writing it to the leds.
 		ldr r4, [r3, #GPIO_DIN]
 		lsl r4, r4, #8
 		str r4, [r5, #GPIO_DOUT]
 
+		//Loading source of input and clearing it from GPIO_IFC
 		ldr r2, [r1, #GPIO_IF]
 		str r2, [r1, #GPIO_IFC]
 
