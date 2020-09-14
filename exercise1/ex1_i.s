@@ -134,6 +134,7 @@ _reset:
 		ldr r2, =#0x802
 		str r2, [r6]
 
+        b .  // do nothing
 
 
 	
@@ -146,8 +147,8 @@ _reset:
 	
         .thumb_func
 gpio_handler:  
-		
-		// Loading button status and writing it to the leds.
+		push {lr}
+
 		ldr r4, [r3, #GPIO_DIN]
 		lsl r4, r4, #8
 		str r4, [r5, #GPIO_DOUT]
@@ -156,7 +157,7 @@ gpio_handler:
 		ldr r2, [r1, #GPIO_IF]
 		str r2, [r1, #GPIO_IFC]
 
-	    b .  // do nothing
+		pop {pc} //return to the content of the link register
 	
 	/////////////////////////////////////////////////////////////////////////////
 	
