@@ -135,6 +135,12 @@ _reset:
 		ldr r2, =#0x802
 		str r2, [r6]
 
+		//Enable energy mode 2 (sleep mode)
+		mov r2, #0x6
+		ldr r7, =SCR
+		str r2, [r7]
+		wfi
+
         b .  // do nothing
 
 
