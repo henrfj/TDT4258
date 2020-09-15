@@ -82,16 +82,17 @@
 	      .type   _reset, %function
         .thumb_func
 _reset: 
+		//All code is setup code untill the pooling loop 
 
 		//Activate clk on GPIO_CONTROLLER
-	    ldr r1, =CMU_BASE
-		ldr r2, [r1, #CMU_HFPERCLKEN0]
-
+	    ldr r1, =CMU_BASE 
+		ldr r2, [r1, #CMU_HFPERCLKEN0] 	// loads HFPERCLK ENABLE value
+		
 		mov r3, #1
 		lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-		orr r2, r2, r3
+		orr r2, r2, r3					// prepares value with gpio clock bit set to 1
 
-		str r2, [r1, #CMU_HFPERCLKEN0]
+		str r2, [r1, #CMU_HFPERCLKEN0]  // stores GPIO activate bit.
 
 		//Set high drive strength (A)
 		ldr r1, =GPIO_PA_BASE
@@ -132,20 +133,14 @@ _reset:
 			b loop
 
 
-	
-	/////////////////////////////////////////////////////////////////////////////
-	//
-  // GPIO handler
-  // The CPU will jump here when there is a GPIO interrupt
-	//
-	/////////////////////////////////////////////////////////////////////////////
-	
+// code below is redundant and could be deleted	
+
         .thumb_func
 gpio_handler:  
 
 	      b .  // do nothing
 	
-	/////////////////////////////////////////////////////////////////////////////
+
 	
         .thumb_func
 dummy_handler:  
