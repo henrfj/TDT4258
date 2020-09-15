@@ -86,7 +86,7 @@ _reset:
 
 
 		//Activate clk on GPIO_CONTROLLER
-	    ldr r1, =CMU_BASE
+	    ldr r1, =CMU_BASE //
 		ldr r2, [r1, #CMU_HFPERCLKEN0]
 
 		mov r3, #1
@@ -95,6 +95,7 @@ _reset:
 
 		str r2, [r1, #CMU_HFPERCLKEN0]
 
+		
 		//Set high drive strength (A)
 		ldr r5, =GPIO_PA_BASE
 		mov r2, #0x2
@@ -149,9 +150,10 @@ _reset:
 gpio_handler:  
 		push {lr}
 
-		ldr r4, [r3, #GPIO_DIN]
-		lsl r4, r4, #8
-		str r4, [r5, #GPIO_DOUT]
+		
+		ldr r4, [r3, #GPIO_DIN] 	//Loads the button input
+		lsl r4, r4, #8 				//left shifts button to the corresponding led pin
+		str r4, [r5, #GPIO_DOUT]	//stores button input on led pins.
 
 		//Loading source of input and clearing it from GPIO_IFC
 		ldr r2, [r1, #GPIO_IF]
