@@ -145,6 +145,12 @@ change_leds:
 			// Loading button status onto r4
 			ldr r4, [r3, #GPIO_DIN]
 
+			cmp r4, r8
+			it eq
+			moveq r15, r14 //return if buttons didn't change
+
+			mov r8, r4
+
 			//left rotate (n<<7 | n>>1)
 			ldr r0, =LEFT
 			//d=a & !b and update the status register (used for ne)
