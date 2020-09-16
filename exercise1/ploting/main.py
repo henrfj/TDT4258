@@ -25,7 +25,7 @@ for value in values_avragebtn_pollingbased:
 print(values)
 
 blue_patch = mpatches.Patch(color='blue', label='Polling based')
-orange_patch = mpatches.Patch(color='orange', label='Interupt based')
+orange_patch = mpatches.Patch(color='orange', label='Interrupt based')
 plt.legend(handles=[blue_patch, orange_patch])
 plt.plot(t,  values, values_avragebtn_interuptbased)
 plt.ylabel('µ amper')
