@@ -87,13 +87,13 @@ _reset:
 
 		//Activate clk on GPIO_CONTROLLER
 	    ldr r1, =CMU_BASE
-		ldr r2, [r1, #CMU_HFPERCLKEN0]
+		ldr r2, [r1, #CMU_HFPERCLKEN0] 	// loads HFPERCLK ENABLE value
 
 		mov r3, #1
 		lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-		orr r2, r2, r3
+		orr r2, r2, r3					// prepares value with gpio clock bit set to 1
 
-		str r2, [r1, #CMU_HFPERCLKEN0]
+		str r2, [r1, #CMU_HFPERCLKEN0]  // stores GPIO activate bit.
 
 		//Set high drive strength (A)
 		ldr r5, =GPIO_PA_BASE
@@ -112,7 +112,6 @@ _reset:
 		//Setting internal pull-ups for buttons
 		mov r4, #0xFF
 		str r4, [r3, #GPIO_DOUT]
-
 		
 		//Sets what ports are allowed to interrupt (Buttons)
 		ldr r1, =GPIO_BASE
@@ -140,6 +139,9 @@ _reset:
 		str r2, [r7]
 
 		mov r6, #0x18 //initial value for change_leds
+		mvn r4, r6, lsl #8
+		str r4, [r5, #GPIO_DOUT]
+
 		wfi
 
         b .  // do nothing
@@ -174,54 +176,76 @@ gpio_handler:
 // r5 is set as the output base while r3 is the input base
 // r2 and r4 are used as temporary, hence they are not restored
 // register r6 is kept as the value
-LEFT  = 0x44
-RIGHT = 0x11
-UP    = 0x22
-DOWN  = 0x88
+LEFT   = 0x40
+RIGHT  = 0x01
+CENTER = 0x14 //actually LEFTR | RIGHTL
+UPL    = 0x20
+UPR    = 0x02
+DOWNL  = 0x80
+DOWNR  = 0x08
 change_leds:
 			// Loading button status onto r4
 			ldr r4, [r3, #GPIO_DIN]
 
-			//left rotate (n<<7 & 0xff) | n>>1
+			//left rotate (n<<7 | n>>1)
 			ldr r0, =LEFT
 			//d=a & !b and update the status register (used for ne)
 			bics r0, r0, r4
-			ittt ne //if then block
+			itt ne //if then block
 			lsrne r2, r6, #7
-			andne r2, r2, #0xff
 			orrne r6, r2, r6, lsl #1 //shifts the second operand!
 
-			//right rotate (n>>7 & 0xff) | n<<1
+			//right rotate (n>>7 | n<<1)
 			ldr r0, =RIGHT
 			bics r0, r0, r4
-			ittt ne
+			itt ne
 			lslne r2, r6, #7
-			andne r2, r2, #0xff
 			orrne r6, r2, r6, lsr #1
 
-			//remove rightmost (n & (n - 1))
-			ldr r0, =DOWN
+			//mirror (!n) & 0xff
+			ldr r0, =CENTER
 			bics r0, r0, r4
-			itt ne
-			subne r2, r6, #1
-			andne r6, r2, r6
+			it ne
+			mvnne r6, r6
+
+			//remove leftmost (n & (n >> 1))
+			ldr r0, =DOWNL
+			bics r0, r0, r4
+			it ne
+			andne r6, r6, r6, lsr #1
+
+			//remove rightmost (n & (n << 1))
+			ldr r0, =DOWNR
+			bics r0, r0, r4
+			it ne
+			andne r6, r6, r6, lsl #1
 
 			//add leftmost (n | (n << 1)) & 0xff
-			ldr r0, =UP
+			ldr r0, =UPL
 			bics r0, r0, r4
 			itt ne
 			orrne r6, r6, r6, lsl #1
 			andne r6, r6, #0xff
 
-			cmp r6, #0
-			it eq
-			moveq r6, #1
+			//add rightmost (n | (n >> 1))
+			ldr r0, =UPR
+			bics r0, r0, r4
+			it ne
+			orrne r6, r6, r6, lsr #1
+
+			//set value 1 if empty
+			//cmp r6, #0
+			//it eq
+			//moveq r6, #1
+
+			and r6, r6, #0xff //ensure register not out of bounds
 
 			//left shifting and negating the input, to match the required input of leds
 			mvn r4, r6, lsl #8
+			//and r4, r4, #0xff00 //just write those
 			str r4, [r5, #GPIO_DOUT]
 
-			mov r15, r14 //return
+			mov pc, lr //return
 
         .thumb_func
 dummy_handler:  
