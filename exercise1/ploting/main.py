@@ -18,12 +18,23 @@ print(t)
 
 plt.bar(t, values_avragebtn_interuptbased)
 plt.show()
-plt.bar(t,values_avragebtn_pollingbased)
+
+ax = plt.subplot(111)
+blue_patch = mpatches.Patch(color='blue', label='Polling based')
+red_patch = mpatches.Patch(color='red', label='Interrupt based')
+plt.legend(handles=[blue_patch, red_patch])
+plt.title('Electicity used when buttons pressed with LEDs')
+plt.ylabel('m amper')
+plt.xlabel('number of buttons pressed on controller')
+ax.bar(t+0.5, values_pollingbased, width=0.5, color='r', label='Interupt', align='center')
+ax.bar(t, values_interruptbased, width=0.5, color='b', label='Polling', align='center')
+
 plt.show()
 for value in values_avragebtn_pollingbased:
     values.append(value*1000)
 print(values)
 
+plt.title('Electricity used when buttons pressed without LEDs')
 blue_patch = mpatches.Patch(color='blue', label='Polling based')
 orange_patch = mpatches.Patch(color='orange', label='Interrupt based')
 plt.legend(handles=[blue_patch, orange_patch])
