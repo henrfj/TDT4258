@@ -82,40 +82,48 @@
 	      .type   _reset, %function
         .thumb_func
 _reset: 
-		// All setup required for using leds and buttons.
+		
 
+		/////////////////////////////////////////////////////////////////////////////
+		// General setup for LEDS and BUTTONS
+		////////////////////////////////////////////////////////////////////////////
+	
 
 		//Activate clk on GPIO_CONTROLLER
 	    ldr r1, =CMU_BASE
-		ldr r2, [r1, #CMU_HFPERCLKEN0]
+		ldr r2, [r1, #CMU_HFPERCLKEN0] 	// loads HFPERCLK ENABLE value
 
 		mov r3, #1
 		lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-		orr r2, r2, r3
+		orr r2, r2, r3					// prepares value with gpio clock bit set to 1
 
-		str r2, [r1, #CMU_HFPERCLKEN0]
+		str r2, [r1, #CMU_HFPERCLKEN0]  // stores GPIO activate bit.
 
-		
-		//Set high drive strength (A)
+		//Set high drive for LEDS (Port A)
 		ldr r5, =GPIO_PA_BASE
 		mov r2, #0x2
 		str r2, [r5, #GPIO_CTRL]
 
-		//Setting pins as output (A)
+		//Setting output pins for LEDS (Port A)
 		mov r2, #0x55555555
 		str r2, [r5, #GPIO_MODEH]
 
-		// BUTTONS pins set as input
+		//Setting input pins for BUTTONS (PORT C)
 		ldr r3, =GPIO_PC_BASE
 		mov r4, #0x33333333
 		str r4, [r3, #GPIO_MODEL]
 
-		//Setting internal pull-ups for buttons
+		//Setting internal pull-ups for BUTTONS (Port C)
 		mov r4, #0xFF
 		str r4, [r3, #GPIO_DOUT]
-
 		
-		//Sets what ports are allowed to interrupt (Buttons)
+
+		/////////////////////////////////////////////////////////////////////////////
+		// Interupt specific setup for BUTTONS
+		////////////////////////////////////////////////////////////////////////////
+
+
+		//Setting BUTTON port to allow interrupts (Port C)
 		ldr r1, =GPIO_BASE
 		mov r2, #0x22222222
 		str r2, [r1, #GPIO_EXTIPSELL]
@@ -123,15 +131,12 @@ _reset:
 		//Enables interrupts on rise and fall values, and interrupt generation
 		// from the GPIO
 		mov r2, #0xff
-		str r2, [r1, #GPIO_EXTIFALL]
-		str r2, [r1, #GPIO_EXTIRISE]
-		str r2, [r1, #GPIO_IEN]
+		str r2, [r1, #GPIO_EXTIFALL] //enable rise
+		str r2, [r1, #GPIO_EXTIRISE] //enable fall
+		str r2, [r1, #GPIO_IEN] //enable generation
 
 		//Enable interrupt handling in M3 at all. Write 0x802 to ISERO
 		ldr r6, =ISER0
-		//mov r2, #0x802 wont cut it. 
-		//Only 8 bits (or more if the number is symmetric(?))
-		//Gets the value from the memory, using "assembler constant pool"
 		ldr r2, =#0x802
 		str r2, [r6]
 
@@ -139,7 +144,8 @@ _reset:
 		mov r2, #0x6
 		ldr r7, =SCR
 		str r2, [r7]
-		wfi
+
+		wfi  //waits for interrupt
 
         b .  // do nothing
 
