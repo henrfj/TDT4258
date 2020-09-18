@@ -136,7 +136,7 @@ _reset:
 
 			// Left shifting the input, to mach the required input of leds
 			lsl r4, r4, #8
-			str r4, [r1, #GPIO_DOUT]
+			str r4, [r5, #GPIO_DOUT]
 
 			b loop
 
