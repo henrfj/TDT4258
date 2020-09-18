@@ -24,10 +24,10 @@ blue_patch = mpatches.Patch(color='blue', label='Polling based')
 red_patch = mpatches.Patch(color='red', label='Interrupt based')
 plt.legend(handles=[blue_patch, red_patch])
 plt.title('Electicity used when buttons pressed with LEDs')
-plt.ylabel('m amper')
+plt.ylabel('m Amper')
 plt.xlabel('number of buttons pressed on controller')
-ax.bar(t+0.5, values_pollingbased, width=0.5, color='r', label='Interupt', align='center')
-ax.bar(t, values_interruptbased, width=0.5, color='b', label='Polling', align='center')
+ax.bar(t, values_interruptbased, width=0.5, color='r', label='Interupt', align='center')
+ax.bar(t+0.5, values_pollingbased, width=0.5, color='b', label='Polling', align='center')
 
 plt.show()
 for value in values_avragebtn_pollingbased:
