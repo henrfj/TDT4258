@@ -1,6 +1,7 @@
 TO DO:
 
-- Coding standards
-- Work division
-- Github
+- Appendices: don't need ones we dont refer to.
+    - Do we need appendices covering the code?
 
+- Comment standards. Is the commenting concistent between the diffrent scripts?
+    - Nocolai
