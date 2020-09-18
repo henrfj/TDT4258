@@ -104,15 +104,6 @@ _reset:
 		mov r2, #0x55555555
 		str r2, [r5, #GPIO_MODEH]
 		
-		//Turn all on (pin 8-15)
-		//For now we overwrite pin 0-7 with 00, might want to change that later.
-		mov r2, #0xFF00
-		str r2, [r1, #GPIO_DOUT]
-
-		// Setting pins to low, test
-		mov r2, #0x8C00
-		str r2, [r1, #GPIO_DOUT]
-
 
 		// BUTTONS pins set as input
 		ldr r3, =GPIO_PC_BASE
