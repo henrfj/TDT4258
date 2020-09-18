@@ -108,10 +108,6 @@ _reset:
 		mov r2, #0x55555555
 		str r2, [r5, #GPIO_MODEH]
 
-		//Setting inital value for LEDS
-		mov r2, #0xFF00
-		str r2, [r1, #GPIO_DOUT]
-
 		//Setting input pins for BUTTONS (PORT C)
 		ldr r3, =GPIO_PC_BASE
 		mov r4, #0x33333333
