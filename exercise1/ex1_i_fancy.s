@@ -166,10 +166,6 @@ _reset:
 gpio_handler:  
 		push {lr}
 
-		//ldr r4, [r3, #GPIO_DIN] 	//Loads the button input
-		//lsl r4, r4, #8 				//left shifts button to the corresponding led pin
-		//str r4, [r5, #GPIO_DOUT]	//stores button input on led pins.
-
 		bl change_leds
 
 		//Loading source of input and clearing it from GPIO_IFC
