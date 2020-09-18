@@ -89,16 +89,15 @@ _reset:
 		////////////////////////////////////////////////////////////////////////////
 	
 
-
-		//Activate clk on GPIO_CONTROLLER
+		//Activate clock on GPIO_CONTROLLER
 	    ldr r1, =CMU_BASE
 		ldr r2, [r1, #CMU_HFPERCLKEN0] 	// loads HFPERCLK ENABLE value
 
 		mov r3, #1
 		lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-		orr r2, r2, r3					// prepares value with gpio clock bit set to 1
+		orr r2, r2, r3					// prepares value with GPIO clock bit set to 1
 
-		str r2, [r1, #CMU_HFPERCLKEN0]  // stores GPIO activate bit.
+		str r2, [r1, #CMU_HFPERCLKEN0]
 
 		//Set high drive for LEDS (Port A)
 		ldr r5, =GPIO_PA_BASE
