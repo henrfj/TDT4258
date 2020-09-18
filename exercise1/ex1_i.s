@@ -97,7 +97,7 @@ _reset:
 		lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
 		orr r2, r2, r3	// prepares value with GPIO clock bit set to 1
 
-		str r2, [r1, #CMU_HFPERCLKEN0
+		str r2, [r1, #CMU_HFPERCLKEN0]
 
 		//Set high drive for LEDS (Port A)
 		ldr r5, =GPIO_PA_BASE
