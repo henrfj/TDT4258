@@ -95,7 +95,7 @@ _reset:
 
 		mov r3, #1
 		lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-		orr r2, r2, r3					// prepares value with GPIO clock bit set to 1
+		orr r2, r2, r3	// prepares value with GPIO clock bit set to 1
 
 		str r2, [r1, #CMU_HFPERCLKEN0
 
@@ -164,7 +164,7 @@ gpio_handler:
 
 		
 		ldr r4, [r3, #GPIO_DIN] 	//Loads the button input
-		lsl r4, r4, #8 				//left shifts button to the corresponding led pin
+		lsl r4, r4, #8 	//left shifts button to the corresponding led pin
 		str r4, [r5, #GPIO_DOUT]	//stores button input on led pins.
 
 		//Loading source of input and clearing it from GPIO_IFC
