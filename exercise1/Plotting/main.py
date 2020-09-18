@@ -39,7 +39,7 @@ blue_patch = mpatches.Patch(color='blue', label='Polling based')
 orange_patch = mpatches.Patch(color='orange', label='Interrupt based')
 plt.legend(handles=[blue_patch, orange_patch])
 plt.plot(t,  values, values_avragebtn_interuptbased)
-plt.ylabel('µ amper')
+plt.ylabel('µ Amper')
 plt.xlabel('number of buttons pressed on controller')
 plt.show()
 
