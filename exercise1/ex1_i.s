@@ -74,7 +74,7 @@
 	/////////////////////////////////////////////////////////////////////////////
 	//
 	// Reset handler
-  // The CPU will start executing here after a reset
+  	// The CPU will start executing here after a reset
 	//
 	/////////////////////////////////////////////////////////////////////////////
 
@@ -86,7 +86,7 @@ _reset:
 
 
 		//Activate clk on GPIO_CONTROLLER
-	    ldr r1, =CMU_BASE //
+	    ldr r1, =CMU_BASE
 		ldr r2, [r1, #CMU_HFPERCLKEN0]
 
 		mov r3, #1
