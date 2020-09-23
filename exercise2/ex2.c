@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
-
+#include "sound.h"
 #include "efm32gg.h"
 
+//Smooth frequency, found on yuotube
+#define SMOOTH_F 26515
 /*
  * TODO calculate the appropriate sample period for the sound wave(s) you 
  * want to generate. The core clock (which the timer clock is derived
@@ -12,7 +14,7 @@
 /*
  * The period between sound samples, in clock cycles 
  */
-#define   SAMPLE_PERIOD   0
+#define   SAMPLE_PERIOD   10000
 
 /*
  * Declaration of peripheral setup functions 
@@ -20,6 +22,8 @@
 void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
+void polling_testing();
+
 
 /*
  * Your code will start executing here 
@@ -42,9 +46,39 @@ int main(void)
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
-	while (1) ;
+
+
+	// Testing polling of timer value using LEDs. 
+	// Polling version of the DAC control, reading from the timer
+	while(1){
+		//polling_testing();
+	}
 
 	return 0;
+}
+
+
+void polling_testing(){
+		int x = 0;
+		volatile uint32_t* test = TIMER1_CNT;
+		if (*test < SAMPLE_PERIOD/2){
+			x = 1;
+		}
+		if (*test > SAMPLE_PERIOD/2){
+			x = 0;
+		}
+
+		if (x==1){
+			//*GPIO_PA_DOUT = 0x0000;
+			*DAC0_CH0DATA = 0x005;
+			*DAC0_CH1DATA = 0x005;
+		}else{
+			//*GPIO_PA_DOUT = 0xff00;
+			*DAC0_CH0DATA = 0x000;
+			*DAC0_CH1DATA = 0x000;
+		}
+
+		//*GPIO_PA_DOUT = (*GPIO_PC_DIN) << 8;	
 }
 
 void setupNVIC()
@@ -57,6 +91,9 @@ void setupNVIC()
 	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
 	 * assignment. 
 	 */
+	//Enable timer module interrupts
+	*ISER0 |= 1 << 12;
+
 }
 
 /*
