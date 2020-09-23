@@ -2,3 +2,6 @@
 *.o
 *.elf
 *.bin
+
+# Exclude backup files
+*~
