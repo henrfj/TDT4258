@@ -21,7 +21,7 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 	 * TODO feed new samples to the DAC remember to clear the pending
 	 * interrupt by writing 1 to TIMER1_IFC 
 	 */
-		int period = get_period();
+		int period = get_period(NO_CHANGE); //1 is the sound-mode
 		int frequency = get_counter(1) % period;
 		int amp = get_set_amplitude(NO_CHANGE);
 
@@ -57,6 +57,16 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 	int button_value = *GPIO_PC_DIN;
 
 	if (button_value == LEFT){
+		//Clock gating the timer module (turns off sound)
+		*CMU_HFPERCLKEN0 &= ~(1 << 6)
+
+	}else if(button_value == RIGHT){
+
+		//un-gate the timer module and play a tune
+		*CMU_HFPERCLKEN0 |= (1 << 6);
+		get_period(2); //setting sound ID = 2
+
+
 
 	}
 	
