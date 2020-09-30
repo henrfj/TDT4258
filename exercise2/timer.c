@@ -31,7 +31,7 @@ void setupTimer(uint16_t period)
 	//Start the timer 
 	*TIMER1_CMD = 1;
 
-
+	
 
 
 

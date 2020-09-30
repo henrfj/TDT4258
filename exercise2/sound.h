@@ -6,6 +6,7 @@
 int get_counter(int increase);
 int get_set_amplitude(int mode);
 
+int get_period();
 
 
 

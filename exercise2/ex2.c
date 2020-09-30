@@ -16,6 +16,8 @@
  */
 #define   SAMPLE_PERIOD   10000
 
+#define Tuner_frequency 5
+
 /*
  * Declaration of peripheral setup functions 
  */
@@ -33,10 +35,10 @@ int main(void)
 	/*
 	 * Call the peripheral setup functions 
 	 */
-	setupGPIO();
+	
 	setupDAC();
 	setupTimer(SAMPLE_PERIOD);
-
+	setupGPIO();
 	/*
 	 * Enable interrupt handling 
 	 */
@@ -91,8 +93,12 @@ void setupNVIC()
 	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
 	 * assignment. 
 	 */
+
 	//Enable timer module interrupts
 	*ISER0 |= 1 << 12;
+
+	//Enable GPIO A and C
+	*ISER0 |=0x802;
 
 }
 
