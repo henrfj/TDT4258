@@ -4,14 +4,6 @@
 #include "efm32gg.h"
 
 
-#define LEFT   = ((~0x40) & 0xff)
-#define RIGHT  = ((~0x01) & 0xff)
-#define CENTER = ((~0x14) & 0xff) //actually LEFTR | RIGHTL
-#define UPL    = ((~0x20) & 0xff)
-#define UPR    = ((~0x02) & 0xff)
-#define DOWNL  = ((~0x80) & 0xff)
-#define DOWNR  = ((~0x08) & 0xff)
-
 /*
  * TIMER1 interrupt handler 
  */
@@ -56,30 +48,7 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 
 	int button_value = *GPIO_PC_DIN;
 
-	if (button_value == LEFT){
-		//Clock gating the timer module (turns off sound)
-		*CMU_HFPERCLKEN0 &= ~(1 << 6)
-
-	}else if(button_value == RIGHT){
-
-		//un-gate the timer module and play a tune
-		*CMU_HFPERCLKEN0 |= (1 << 6);
-		get_period(2); //setting sound ID = 2
-
-
-
-	}
-	
-
-
-
-	if (*GPIO_PC_DIN < 0xff){
-		//*TIMER1_IEN = 1;
-		*CMU_HFPERCLKEN0 |= (1 << 6);
-	}
-
-
-	
+	read_button_value(button_value);
 
 	*GPIO_IFC = *GPIO_IF;
 
@@ -95,12 +64,11 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 	 * interrupt 
 	 */
 
-	int test = *GPIO_PC_DIN;
+	int button_value = *GPIO_PC_DIN;
 
-	if (test < 0xff){
-		//*TIMER1_IEN = 0;
-		*CMU_HFPERCLKEN0 &= ~(1 << 6);
-	}
+	read_button_value(button_value);
 
 	*GPIO_IFC = *GPIO_IF;
 }
+
+
