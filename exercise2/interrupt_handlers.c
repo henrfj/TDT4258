@@ -25,7 +25,7 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
     } else {
         *DAC0_CH0DATA = 0x000;
         *DAC0_CH1DATA = 0x000;
-        get_period(NO_CHANGE); //get next note after 2 phases
+        play_song(NO_CHANGE); //get next note after 2 phases
     }
     phase = !phase; //invert it
 
