@@ -1,45 +1,30 @@
 #include "sound.h"
-
-
+#include "songs.h"
 
 int get_counter(int increase){
-    static int counter = 0;
+    static uint16_t counter = 0;
     if (increase!=NO_CHANGE){
         counter++;
     }
     return counter;
 }
 
-#define LEN(a) (sizeof(a)/sizeof(*a))
-#define SONG(id) (id==0? song0 :(id==1? song1 : (id==2? song2 : song3)))
-
-int song0[] = {60, 10, 1000, 9, 1000, 8, 1000, 7, 1000, 6, 1000, 1000, 1000, 6, 1000,
-        1000, 1000, 5, 1000, 5, 1000, 5, 1000, 5, 1000, 6, 1000, 1000, 1000, 1000,
-        1000, 7, 1000, 7, 1000, 7, 1000, 7, 1000, 8, 1000, 1000, 1000, 8, 1000,
-        1000, 1000, 9, 1000, 9, 1000, 9, 1000, 9, 1000, 10, 1000, 1000, 1000, 1000, 1000};
-
-int song1[]= {7, 10, 10, 10, 10, 10, 10, 10};
-
-int song2[] = {7, 10, 10, 10, 10, 10, 10, 10};
-
-int song3[] = {8, 3, 15, 3, 15, 3, 15, 3, 15};
-
-
-
 int get_period(int mode){
     // Mode 1 => soundmodem used by timer interrupt to generate sound i DAC
     // Mode 2, .. 5 => changes the song ID, called by GPIO-button interrupt
 
-    static int current_song_id = 0;
+    static uint8_t current_song_id = 0;
+    static uint16_t i = 1; //index of array
+    static uint16_t timer = 0; //Return chaning note counter
 
     // Soundmode, playing music
     if (mode == NO_CHANGE){
-        static int i = 1; //index of array
-        static int timer = 0; //Return chaning note counter
 
-        int period =  SONG(current_song_id)[i];
+        float frequency =  SONG(current_song_id)[i];
 
-        if (timer > 500){
+        if (timer == 1) {
+            SET_FREQ(frequency); //set the new frequency on the timer
+        } else if (timer > GET_DURATION(frequency)){
             timer = 0;
             i++;
             int len = SONG(current_song_id)[0];
@@ -49,12 +34,14 @@ int get_period(int mode){
         }
 
         timer++;
-        return period;
+        return timer; //FIXME change function name
     }
 
     //Setting ID
     if (mode > NO_CHANGE){
         current_song_id = mode;
+        i = 1; //restart the song
+        timer = 0;
     }
 
     return 1;
@@ -64,6 +51,7 @@ int get_period(int mode){
 
 int get_set_amplitude(int mode){
     static int amp = 0x0ff;
+    //static uint16_t amp = 0x01f;
 
     if (mode==NO_CHANGE){
         return amp;

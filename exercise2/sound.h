@@ -13,6 +13,12 @@
 #define DOWNL   ((~0x80) & 0xff)
 #define DOWNR   ((~0x08) & 0xff)
 
+#define CPU_FREQ 14000000
+#define NOTE_DURATION 0.25
+
+#define GET_PERIOD(freq) ((uint16_t)(CPU_FREQ / (freq*2)))
+#define SET_FREQ(freq) (*TIMER1_TOP = GET_PERIOD(freq))
+#define GET_DURATION(freq) ((uint32_t)(NOTE_DURATION*freq))
 
 
 int get_counter(int increase);

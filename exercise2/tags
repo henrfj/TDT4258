@@ -1,0 +1,143 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ASFLAGS	Makefile	/^ASFLAGS=-mcpu=cortex-m3 -mthumb -g$/;"	m
+CC	Makefile	/^CC=arm-none-eabi-gcc$/;"	m
+CENTER	sound.h	10;"	d
+CFLAGS	Makefile	/^CFLAGS=-mcpu=cortex-m3 -mthumb -g3 -std=c99 -Wall$/;"	m
+CMU2_HFPERCLKEN0_DAC0	efm32gg.h	56;"	d
+CMU2_HFPERCLKEN0_GPIO	efm32gg.h	58;"	d
+CMU2_HFPERCLKEN0_PRS	efm32gg.h	57;"	d
+CMU2_HFPERCLKEN0_TIMER1	efm32gg.h	59;"	d
+CMU_BASE2	efm32gg.h	49;"	d
+CMU_CMD	efm32gg.h	54;"	d
+CMU_HFCORECLKEN0	efm32gg.h	52;"	d
+CMU_HFCORECLKEN0_DMA	efm32gg.h	61;"	d
+CMU_HFPERCLKDIV	efm32gg.h	51;"	d
+CMU_HFPERCLKEN0	efm32gg.h	53;"	d
+DAC0_BASE2	efm32gg.h	103;"	d
+DAC0_CH0CTRL	efm32gg.h	106;"	d
+DAC0_CH0DATA	efm32gg.h	112;"	d
+DAC0_CH1CTRL	efm32gg.h	107;"	d
+DAC0_CH1DATA	efm32gg.h	113;"	d
+DAC0_COMBDATA	efm32gg.h	114;"	d
+DAC0_CTRL	efm32gg.h	105;"	d
+DAC0_IEN	efm32gg.h	108;"	d
+DAC0_IF	efm32gg.h	109;"	d
+DAC0_IFC	efm32gg.h	111;"	d
+DAC0_IFS	efm32gg.h	110;"	d
+DMA_ALTCTRLBASE	efm32gg.h	123;"	d
+DMA_BASE	efm32gg.h	118;"	d
+DMA_CH0_CTRL	efm32gg.h	131;"	d
+DMA_CHALTC	efm32gg.h	128;"	d
+DMA_CHENS	efm32gg.h	127;"	d
+DMA_CHUSEBURSTC	efm32gg.h	125;"	d
+DMA_CHUSEBURSTS	efm32gg.h	124;"	d
+DMA_CONFIG	efm32gg.h	121;"	d
+DMA_CTRLBASE	efm32gg.h	122;"	d
+DMA_IEN	efm32gg.h	130;"	d
+DMA_IFC	efm32gg.h	129;"	d
+DMA_REQMASKC	efm32gg.h	126;"	d
+DMA_STATUS	efm32gg.h	120;"	d
+DOWNL	sound.h	13;"	d
+DOWNR	sound.h	14;"	d
+EMU_BASE2	efm32gg.h	97;"	d
+EMU_CTRL	efm32gg.h	99;"	d
+GPIO_EVEN_IRQHandler	interrupt_handlers.c	/^void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()$/;"	f
+GPIO_EXTIFALL	efm32gg.h	42;"	d
+GPIO_EXTIPSELH	efm32gg.h	40;"	d
+GPIO_EXTIPSELL	efm32gg.h	39;"	d
+GPIO_EXTIRISE	efm32gg.h	41;"	d
+GPIO_IEN	efm32gg.h	43;"	d
+GPIO_IF	efm32gg.h	44;"	d
+GPIO_IFC	efm32gg.h	45;"	d
+GPIO_ODD_IRQHandler	interrupt_handlers.c	/^void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()$/;"	f
+GPIO_PA_BASE	efm32gg.h	5;"	d
+GPIO_PA_CTRL	efm32gg.h	9;"	d
+GPIO_PA_DIN	efm32gg.h	16;"	d
+GPIO_PA_DOUT	efm32gg.h	12;"	d
+GPIO_PA_DOUTCLR	efm32gg.h	14;"	d
+GPIO_PA_DOUTSET	efm32gg.h	13;"	d
+GPIO_PA_DOUTTGL	efm32gg.h	15;"	d
+GPIO_PA_MODEH	efm32gg.h	11;"	d
+GPIO_PA_MODEL	efm32gg.h	10;"	d
+GPIO_PA_PINLOCKN	efm32gg.h	17;"	d
+GPIO_PB_BASE	efm32gg.h	6;"	d
+GPIO_PB_CTRL	efm32gg.h	19;"	d
+GPIO_PB_DIN	efm32gg.h	26;"	d
+GPIO_PB_DOUT	efm32gg.h	22;"	d
+GPIO_PB_DOUTCLR	efm32gg.h	24;"	d
+GPIO_PB_DOUTSET	efm32gg.h	23;"	d
+GPIO_PB_DOUTTGL	efm32gg.h	25;"	d
+GPIO_PB_MODEH	efm32gg.h	21;"	d
+GPIO_PB_MODEL	efm32gg.h	20;"	d
+GPIO_PB_PINLOCKN	efm32gg.h	27;"	d
+GPIO_PC_BASE	efm32gg.h	7;"	d
+GPIO_PC_CTRL	efm32gg.h	29;"	d
+GPIO_PC_DIN	efm32gg.h	36;"	d
+GPIO_PC_DOUT	efm32gg.h	32;"	d
+GPIO_PC_DOUTCLR	efm32gg.h	34;"	d
+GPIO_PC_DOUTSET	efm32gg.h	33;"	d
+GPIO_PC_DOUTTGL	efm32gg.h	35;"	d
+GPIO_PC_MODEH	efm32gg.h	31;"	d
+GPIO_PC_MODEL	efm32gg.h	30;"	d
+GPIO_PC_PINLOCKN	efm32gg.h	37;"	d
+IABR0	efm32gg.h	83;"	d
+IABR1	efm32gg.h	84;"	d
+ICER0	efm32gg.h	77;"	d
+ICER1	efm32gg.h	78;"	d
+ICPR0	efm32gg.h	81;"	d
+ICPR1	efm32gg.h	82;"	d
+IPR0	efm32gg.h	90;"	d
+IPR1	efm32gg.h	91;"	d
+IPR2	efm32gg.h	92;"	d
+IPR3	efm32gg.h	93;"	d
+IPR_BASE	efm32gg.h	88;"	d
+ISER0	efm32gg.h	75;"	d
+ISER1	efm32gg.h	76;"	d
+ISPR0	efm32gg.h	79;"	d
+ISPR1	efm32gg.h	80;"	d
+LD	Makefile	/^LD=arm-none-eabi-gcc$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS=-mcpu=cortex-m3 -mthumb -g -lgcc -lc -lcs3 -lcs3unhosted -lefm32gg -Llib$/;"	m
+LEFT	sound.h	8;"	d
+LEN	sound.c	13;"	d	file:
+LINKERSCRIPT	Makefile	/^LINKERSCRIPT=lib\/efm32gg.ld$/;"	m
+NO_CHANGE	sound.h	7;"	d
+OBJCOPY	Makefile	/^OBJCOPY=arm-none-eabi-objcopy$/;"	m
+PRS_BASE	efm32gg.h	135;"	d
+PRS_CH0_CTRL	efm32gg.h	137;"	d
+RIGHT	sound.h	9;"	d
+SAMPLE_PERIOD	ex2.c	17;"	d	file:
+SCR	efm32gg.h	141;"	d
+SMOOTH_F	ex2.c	7;"	d	file:
+SONG	sound.c	14;"	d	file:
+SOUND_H_	sound.h	2;"	d
+SYSTICK_CTRL	efm32gg.h	142;"	d
+SYSTICK_LOAD	efm32gg.h	143;"	d
+TIMER1_BASE	efm32gg.h	65;"	d
+TIMER1_CMD	efm32gg.h	67;"	d
+TIMER1_CNT	efm32gg.h	71;"	d
+TIMER1_IEN	efm32gg.h	68;"	d
+TIMER1_IFC	efm32gg.h	69;"	d
+TIMER1_IRQHandler	interrupt_handlers.c	/^void __attribute__ ((interrupt)) TIMER1_IRQHandler()$/;"	f
+TIMER1_TOP	efm32gg.h	70;"	d
+Tuner_frequency	ex2.c	19;"	d	file:
+UPL	sound.h	11;"	d
+UPR	sound.h	12;"	d
+get_counter	sound.c	/^int get_counter(int increase){$/;"	f
+get_period	sound.c	/^int get_period(int mode){$/;"	f
+get_set_amplitude	sound.c	/^int get_set_amplitude(int mode){$/;"	f
+main	ex2.c	/^int main(void)$/;"	f
+polling_testing	ex2.c	/^void polling_testing(){$/;"	f
+read_button_value	sound.c	/^void read_button_value(int button_value){$/;"	f
+setupDAC	dac.c	/^void setupDAC()$/;"	f
+setupGPIO	gpio.c	/^void setupGPIO()$/;"	f
+setupNVIC	ex2.c	/^void setupNVIC()$/;"	f
+setupTimer	timer.c	/^void setupTimer(uint16_t period)$/;"	f
+song0	sound.c	/^int song0[] = {60, 10, 1000, 9, 1000, 8, 1000, 7, 1000, 6, 1000, 1000, 1000, 6, 1000,$/;"	v
+song1	sound.c	/^int song1[]= {7, 10, 10, 10, 10, 10, 10, 10};$/;"	v
+song2	sound.c	/^int song2[] = {7, 10, 10, 10, 10, 10, 10, 10};$/;"	v
+song3	sound.c	/^int song3[] = {8, 3, 15, 3, 15, 3, 15, 3, 15};$/;"	v
