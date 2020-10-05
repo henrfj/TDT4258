@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include "sound.h"
 #include "efm32gg.h"
-#include <stdio.h>
 
 //Smooth frequency, found on yuotube
 #define SMOOTH_F 26515
@@ -26,8 +25,9 @@ void setupGPIO();
 void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
-void polling_testing();
+void polling_one_period(int amplitude, float period);
 void polling_solution();
+
 
 
 /*
@@ -68,76 +68,7 @@ int main(void)
 	return 0;
 }
 
-void polling_solution(){
-    uint8_t playing = 0;
-	int button_value = *GPIO_PC_DIN;
-	int prev_button_value = *GPIO_PC_DIN;
-    while(1){
-        if(playing){
-			while(!get_set_song_done(GET_DONE, 0)){ 
-				static uint8_t phase = 1;
-				int amp = get_set_amplitude(NO_CHANGE);
-				uint8_t status;
-				//Square wave
-				if (phase){
-					//12-bit registers, dont forget
-					*DAC0_CH0DATA = amp;
-					*DAC0_CH1DATA = amp;
-				} else {
-					*DAC0_CH0DATA = 0x000;
-					*DAC0_CH1DATA = 0x000;
-					//get next note after 2 phases
-					status = play_song(NO_CHANGE); 
-				}
-				phase = !phase; //invert it
 
-				Sleep(0.04);
-				/*
-				while(*TIMER1_CNT >= *TIMER1_TOP){	
-
-				}
-				*TIMER1_CNT = 0;
-				*/
-
-			}
-			get_set_song_done(SET_DONE, 0);
-			prev_button_value = button_value;
-			playing = 0;
-
-        }else if(button_value != prev_button_value){
-            read_button_value(button_value);
-			playing = 1;
-
-        }else{
-			button_value = *GPIO_PC_DIN;
-		}
-
-    }
-
-}
-
-void polling_testing(){
-		int x = 0;
-		volatile uint32_t* test = TIMER1_CNT;
-		if (*test < SAMPLE_PERIOD/2){
-			x = 1;
-		}
-		if (*test > SAMPLE_PERIOD/2){
-			x = 0;
-		}
-
-		if (x==1){
-			//*GPIO_PA_DOUT = 0x0000;
-			*DAC0_CH0DATA = 0x005;
-			*DAC0_CH1DATA = 0x005;
-		}else{
-			//*GPIO_PA_DOUT = 0xff00;
-			*DAC0_CH0DATA = 0x000;
-			*DAC0_CH1DATA = 0x000;
-		}
-
-		//*GPIO_PA_DOUT = (*GPIO_PC_DIN) << 8;	
-}
 
 void setupNVIC()
 {
@@ -176,3 +107,5 @@ void setupNVIC()
  * BURTC_IRQHandler CMU_IRQHandler VCMP_IRQHandler LCD_IRQHandler
  * MSC_IRQHandler AES_IRQHandler EBI_IRQHandler EMU_IRQHandler 
  */
+
+

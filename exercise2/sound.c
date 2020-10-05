@@ -27,7 +27,6 @@ int play_song(int mode){
             if (i > len){
                 i = 1;
                 ret = STOP_HERE;
-                get_set_song_done(SET_DONE, 1);
             }
         }
 
@@ -95,15 +94,53 @@ void read_button_value(int button_value){
     }
 }
 
+// POLLING UNDER HERE
 
-int get_set_song_done(int mode, int value){
-    static int song_done;
-    if (mode==GET_DONE){
-        return song_done;
+void polling_solution(){
+    while(1){ //Polling forever
+        
 
-    }else if(mode==SET_DONE){
-        song_done = value;
-        return 0;
+		
+		
+	}
+}
+
+void polling_one_period(int amplitude, float period){
+	//12-bit registers, dont forget
+	*DAC0_CH0DATA = amplitude;
+	*DAC0_CH1DATA = amplitude;
+	my_sleep_2(period/2);
+	*DAC0_CH0DATA = 0x000;
+	*DAC0_CH1DATA = 0x000;	
+	my_sleep_2(period/2);
+}
+
+void polling_play_sound(int sound_ID){
+
+    int amplitude = 0x2f;
+    float period = 0.0004;
+    float duration = 0.5;
+    while(1){	//Duration
+        polling_one_period(amplitude, period);
     }
 
+}
+
+
+void my_sleep_1(int secs) {
+  unsigned int i,s;
+  for (s=0; s < secs; s++) {
+    for (i=0; i < CPU_FREQ; i++) {
+       // skip CPU cycle or any other statement(s) for making loop 
+       // untouched by C compiler code optimizations
+       __asm__("nop");
+    }
+  }
+}
+
+void my_sleep_2(float secs) {
+  	*TIMER1_TOP = secs*CPU_FREQ; //#Cycles to reach "secs"
+	while(*TIMER1_CNT <= *TIMER1_TOP - 4){
+		__asm__("nop");
+	}
 }

@@ -42,8 +42,17 @@ int play_song(int mode);
 
 void read_button_value(int button_value);
 
-//used by polling-based solution, to see if 
-int get_set_song_done(int mode, int value);
+//POLLING UNDER HERE
+
+void polling_solution();
+
+void polling_one_period(int amplitude, float period);
+
+void polling_play_sound(int sound_ID);
+
+void my_sleep_1(int secs);
+
+void my_sleep_2(float secs);
 
 #endif
 
