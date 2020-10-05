@@ -42,10 +42,7 @@ int main(void)
 	setupDAC();
 	setupTimer(SAMPLE_PERIOD);
 	setupGPIO();
-	/*
-	 * Enable interrupt handling 
-	 */
-	setupNVIC();
+	
 
 	/*
 	 * TODO for higher energy efficiency, sleep while waiting for
@@ -58,7 +55,12 @@ int main(void)
 #ifdef POLLING
 	polling_solution();
 #else
+	/*
+	 * Enable interrupt handling 
+	 */
+	setupNVIC();
 	while(1){
+
 	}
 #endif
 
@@ -66,15 +68,30 @@ int main(void)
 }
 
 void polling_solution(){
-    int button_value = *GPIO_PC_DIN;
     uint8_t playing = 0;
+	int button_value = *GPIO_PC_DIN;
+	int prev_button_value = *GPIO_PC_DIN;
     while(1){
+
         if(playing){
+			
+			
+			while(1){ //NEED EXIT CONDITION 
+				play_song(button_value);
+
+
+			}
+
+			prev_button_value = button_value;
+			playing = 0;
+
+        }else if(button_value != prev_button_value){
+            read_button_value(button_value);
+			playing = 1;
 
         }else{
-            read_button_value(button_value);
-            printf("%d", button_value);
-        }
+			button_value = *GPIO_PC_DIN;
+		}
 
     }
 
