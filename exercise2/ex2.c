@@ -26,11 +26,13 @@ void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
 void polling_testing();
+void polling_solution();
 
 
 /*
  * Your code will start executing here 
  */
+#define POLLING //FIXME define it in a custom target in the Makefile
 int main(void)
 {
 	/*
@@ -53,13 +55,30 @@ int main(void)
 
 	// Testing polling of timer value using LEDs. 
 	// Polling version of the DAC control, reading from the timer
+#ifdef POLLING
+	polling_solution();
+#else
 	while(1){
-		//polling_testing();
 	}
+#endif
 
 	return 0;
 }
 
+void polling_solution(){
+    int button_value = *GPIO_PC_DIN;
+    uint8_t playing = 0;
+    while(1){
+        if(playing){
+
+        }else{
+            read_button_value(button_value);
+            printf("%d", button_value);
+        }
+
+    }
+
+}
 
 void polling_testing(){
 		int x = 0;
