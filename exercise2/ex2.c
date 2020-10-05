@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "sound.h"
 #include "efm32gg.h"
+#include <stdio.h>
 
 //Smooth frequency, found on yuotube
 #define SMOOTH_F 26515
@@ -72,16 +73,34 @@ void polling_solution(){
 	int button_value = *GPIO_PC_DIN;
 	int prev_button_value = *GPIO_PC_DIN;
     while(1){
-
         if(playing){
-			
-			
-			while(1){ //NEED EXIT CONDITION 
-				play_song(button_value);
+			while(!get_set_song_done(GET_DONE, 0)){ 
+				static uint8_t phase = 1;
+				int amp = get_set_amplitude(NO_CHANGE);
+				uint8_t status;
+				//Square wave
+				if (phase){
+					//12-bit registers, dont forget
+					*DAC0_CH0DATA = amp;
+					*DAC0_CH1DATA = amp;
+				} else {
+					*DAC0_CH0DATA = 0x000;
+					*DAC0_CH1DATA = 0x000;
+					//get next note after 2 phases
+					status = play_song(NO_CHANGE); 
+				}
+				phase = !phase; //invert it
 
+				Sleep(0.04);
+				/*
+				while(*TIMER1_CNT >= *TIMER1_TOP){	
+
+				}
+				*TIMER1_CNT = 0;
+				*/
 
 			}
-
+			get_set_song_done(SET_DONE, 0);
 			prev_button_value = button_value;
 			playing = 0;
 

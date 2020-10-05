@@ -32,6 +32,9 @@
 #define BASE_AMPL 0x5f
 #define GET_AMPL(level) (BASE_AMPL+(level<<2))
 
+#define GET_DONE 10
+#define SET_DONE 20
+
 
 int get_set_amplitude(int mode);
 
@@ -39,11 +42,8 @@ int play_song(int mode);
 
 void read_button_value(int button_value);
 
-
-
-
-
-
+//used by polling-based solution, to see if 
+int get_set_song_done(int mode, int value);
 
 #endif
 

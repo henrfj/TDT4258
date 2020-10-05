@@ -27,6 +27,7 @@ int play_song(int mode){
             if (i > len){
                 i = 1;
                 ret = STOP_HERE;
+                get_set_song_done(SET_DONE, 1);
             }
         }
 
@@ -92,4 +93,17 @@ void read_button_value(int button_value){
 		PLAY();
         play_song(NEW_TONE(6));
     }
+}
+
+
+int get_set_song_done(int mode, int value){
+    static int song_done;
+    if (mode==GET_DONE){
+        return song_done;
+
+    }else if(mode==SET_DONE){
+        song_done = value;
+        return 0;
+    }
+
 }
