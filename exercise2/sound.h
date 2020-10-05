@@ -32,8 +32,6 @@
 #define BASE_AMPL 0x5f
 #define GET_AMPL(level) (BASE_AMPL+(level<<2))
 
-#define GET_DONE 10
-#define SET_DONE 20
 
 
 int get_set_amplitude(int mode);
@@ -46,9 +44,9 @@ void read_button_value(int button_value);
 
 void polling_solution();
 
-void polling_one_period(int amplitude, float period);
+void polling_one_period(uint8_t amplitude, float period);
 
-void polling_play_sound(int sound_ID);
+void polling_play_sound(int current_song_id);
 
 void my_sleep_1(int secs);
 

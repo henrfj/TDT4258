@@ -97,15 +97,73 @@ void read_button_value(int button_value){
 // POLLING UNDER HERE
 
 void polling_solution(){
+    int button_value;
     while(1){ //Polling forever
-        
+        button_value = *GPIO_PC_DIN;
+        if (button_value == LEFT){
+            __asm__("nop");
+        }else if(button_value == UPL){
+            polling_play_sound(0);
+        }else if(button_value == RIGHTL){
+            polling_play_sound(1);
+        }else if(button_value == DOWNL){
+            polling_play_sound(2);
+        }else if(button_value == LEFTR){
+            polling_play_sound(3);
+        }else if(button_value == UPR){
+            polling_play_sound(4);
+        }else if(button_value == RIGHT){
+            polling_play_sound(5);
+        }else if(button_value == DOWNR){
+            polling_play_sound(6);
+        }
 
-		
-		
-	}
+    }   
+
 }
 
-void polling_one_period(int amplitude, float period){
+void polling_play_sound(int current_song_id){
+    int len = SONG(current_song_id)[0];
+    int cond;
+    int timer;
+    float frequency;
+    uint8_t ampl;
+    uint8_t amplitude;
+    uint8_t speed;
+    float period;
+    float clk_duration;
+
+    for (int i = 1; i < len; i++){
+        //get frequenct
+        frequency = SONG(current_song_id)[i];
+        period = 1/frequency; //in seconds
+
+        //get amplitude
+        ampl = SONG_AMPL(current_song_id)[i];
+        amplitude = BASE_AMPL + (ampl<<2);  //amplitude is way too low
+
+        //get duration
+        speed = SONG_SPD(current_song_id)[i];
+        clk_duration = 0.25*frequency/speed; // duration of a note in clks
+        
+        //Playing note with frequency and ampl, over duration.
+        cond = 0;
+        timer = 0;
+        while(!cond){	//Duration
+            if (timer < clk_duration){
+                polling_one_period(amplitude, period);
+                timer++;
+            }else   //timer has reached condition
+            {
+                cond = 1;
+            }
+        }
+    
+    }
+
+}
+
+void polling_one_period(uint8_t amplitude, float period){
 	//12-bit registers, dont forget
 	*DAC0_CH0DATA = amplitude;
 	*DAC0_CH1DATA = amplitude;
@@ -113,17 +171,6 @@ void polling_one_period(int amplitude, float period){
 	*DAC0_CH0DATA = 0x000;
 	*DAC0_CH1DATA = 0x000;	
 	my_sleep_2(period/2);
-}
-
-void polling_play_sound(int sound_ID){
-
-    int amplitude = 0x2f;
-    float period = 0.0004;
-    float duration = 0.5;
-    while(1){	//Duration
-        polling_one_period(amplitude, period);
-    }
-
 }
 
 

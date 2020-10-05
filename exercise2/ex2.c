@@ -25,10 +25,6 @@ void setupGPIO();
 void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
-void polling_one_period(int amplitude, float period);
-void polling_solution();
-
-
 
 /*
  * Your code will start executing here 
