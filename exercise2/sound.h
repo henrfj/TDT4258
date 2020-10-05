@@ -18,6 +18,7 @@
 
 #define CPU_FREQ 14000000
 #define NOTE_DURATION 0.25
+#define BEAT 0.15   //used by polling solution
 
 #define GET_PERIOD(freq) ((uint16_t)(CPU_FREQ / (freq*2)))
 #define SET_FREQ(freq) (*TIMER1_TOP = GET_PERIOD(freq))

@@ -101,13 +101,13 @@ void polling_solution(){
     while(1){ //Polling forever
         button_value = *GPIO_PC_DIN;
         if (button_value == LEFT){
-            __asm__("nop");
+            polling_play_sound(2);
         }else if(button_value == UPL){
             polling_play_sound(0);
         }else if(button_value == RIGHTL){
             polling_play_sound(1);
         }else if(button_value == DOWNL){
-            polling_play_sound(2);
+            __asm__("nop");
         }else if(button_value == LEFTR){
             polling_play_sound(3);
         }else if(button_value == UPR){
@@ -125,40 +125,44 @@ void polling_solution(){
 void polling_play_sound(int current_song_id){
     int len = SONG(current_song_id)[0];
     int cond;
-    int timer;
     float frequency;
     uint8_t ampl;
     uint8_t amplitude;
     uint8_t speed;
     float period;
-    float clk_duration;
+    float duration;
+    int clk_duration;
+    int track;
 
-    for (int i = 1; i < len; i++){
+    for (int i = 1; i < len + 1; i++){
         //get frequenct
         frequency = SONG(current_song_id)[i];
-        period = 1/frequency; //in seconds
+        period = 1/(frequency); //in seconds
 
         //get amplitude
         ampl = SONG_AMPL(current_song_id)[i];
         amplitude = BASE_AMPL + (ampl<<2);  //amplitude is way too low
 
-        //get duration
+        //get duration. "1/speed" is no. 1/16 of a beat
         speed = SONG_SPD(current_song_id)[i];
-        clk_duration = 0.25*frequency/speed; // duration of a note in clks
+        duration = (BEAT * frequency / speed); //duartion in second, scaled to match freq
+        clk_duration = duration * 100; // * CPU_FREQ
+
         
-        //Playing note with frequency and ampl, over duration.
         cond = 0;
-        timer = 0;
-        while(!cond){	//Duration
-            if (timer < clk_duration){
-                polling_one_period(amplitude, period);
-                timer++;
-            }else   //timer has reached condition
-            {
+        //Reset timer
+        *TIMER1_CNT = 0;
+        //Start the timer 
+	    *TIMER1_CMD = 1;
+        while (!cond){
+            track = *TIMER1_CNT;
+            polling_one_period(amplitude, period);
+            if (track > clk_duration){
                 cond = 1;
             }
         }
-    
+        //stop timer
+        *TIMER1_CMD = 0;
     }
 
 }
@@ -186,8 +190,10 @@ void my_sleep_1(int secs) {
 }
 
 void my_sleep_2(float secs) {
-  	*TIMER1_TOP = secs*CPU_FREQ; //#Cycles to reach "secs"
-	while(*TIMER1_CNT <= *TIMER1_TOP - 4){
+  	int roof = secs*CPU_FREQ; //#Cycles to reach "secs"
+    int i = 0;
+	while(i < roof){
 		__asm__("nop");
+        i++;
 	}
 }

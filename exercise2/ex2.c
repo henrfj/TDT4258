@@ -37,8 +37,7 @@ int main(void)
 	 */
 	
 	setupDAC();
-	setupTimer(SAMPLE_PERIOD);
-	setupGPIO();
+	
 	
 
 	/*
@@ -50,12 +49,27 @@ int main(void)
 	// Testing polling of timer value using LEDs. 
 	// Polling version of the DAC control, reading from the timer
 #ifdef POLLING
+		//Polling setup
+
+	//Enable clock on timer module
+	*CMU_HFPERCLKEN0 |= 1 << 6;
+	//Used manually to count clk_cyckles on CPU
+	*TIMER1_TOP = 0xffffffff;
+	//Enable GPIO clock 
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;	
+	//BUTTONS
+	*GPIO_PC_MODEL = 0x33333333; /*Setting pins as input pins */
+	*GPIO_PC_DOUT = 0xff;	/*Internal pull-ip resistors for the buttons*/
+
 	polling_solution();
 #else
 	/*
 	 * Enable interrupt handling 
 	 */
+	setupGPIO();
+	setupTimer(SAMPLE_PERIOD);
 	setupNVIC();
+	
 	while(1){
 
 	}
