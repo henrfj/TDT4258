@@ -61,20 +61,20 @@ int get_set_amplitude(int mode){
 
 void read_button_value(int button_value){
     if (button_value == LEFT){
-		//Clock gating the timer module (turns off sound)
-		PAUSE();
+		//un-gate the timer module and play a tune
+		PLAY();
+        play_song(NEW_TONE(0));
 	} else if(button_value == UPL){
 		//un-gate the timer module and play a tune
 		PLAY();
-		play_song(NEW_TONE(0)); //setting sound ID = 0
+		play_song(NEW_TONE(1)); //setting sound ID = 0
 	} else if(button_value == RIGHTL){
         //un-gate the timer module and play a tune
 		PLAY();
-        play_song(NEW_TONE(1));
-    } else if(button_value == DOWNL){
-        //un-gate the timer module and play a tune
-		PLAY();
         play_song(NEW_TONE(2));
+    } else if(button_value == DOWNL){
+        //Clock gating the timer module (turns off sound)
+		PAUSE();
     } else if(button_value == LEFTR){
         //un-gate the timer module and play a tune
 		PLAY();
