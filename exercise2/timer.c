@@ -3,7 +3,6 @@
 
 #include "efm32gg.h"
 
-
 /*
  * function to setup the timer 
  */
@@ -30,10 +29,5 @@ void setupTimer(uint16_t period)
 	*TIMER1_IEN = 1;
 	//Start the timer 
 	*TIMER1_CMD = 1;
-
-	
-
-
-
 
 }

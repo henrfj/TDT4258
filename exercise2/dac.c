@@ -24,6 +24,5 @@ void setupDAC()
 	//Enable the left and right DAC channels
 	*DAC0_CH0CTRL = 1;
 	*DAC0_CH1CTRL = 1;
-	
 
 }

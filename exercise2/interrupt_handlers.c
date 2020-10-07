@@ -3,37 +3,39 @@
 #include "sound.h"
 #include "efm32gg.h"
 
-
 /*
  * TIMER1 interrupt handler 
  */
 void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {
-    /*
-     * TODO feed new samples to the DAC remember to clear the pending
-     * interrupt by writing 1 to TIMER1_IFC 
-     */
-    static uint8_t phase = 1;
-    int amp = get_set_amplitude(NO_CHANGE);
-    uint8_t status;
+	static uint8_t phase = 1;
+	int amp = get_set_amplitude(NO_CHANGE);
+	uint8_t status;
 
-    //Square wave
+	/*
+	 * Square wave produced by alternating two phases
+	 * static variables are used to keep the value among calls
+	 * the amplitude used is fetched by the library function
+	 * After the two phases the library function to progress inside
+	 * the tone is called, representing a tick in the song
+	 * (more details follow)
+	 */
 
-    if (phase){
-        //12-bit registers, dont forget
-        *DAC0_CH0DATA = amp;
-        *DAC0_CH1DATA = amp;
-    } else {
-        *DAC0_CH0DATA = 0x000;
-        *DAC0_CH1DATA = 0x000;
-        status = play_song(NO_CHANGE); //get next note after 2 phases
-    }
-    phase = !phase; //invert it
+	if (phase) {
+		*DAC0_CH0DATA = amp;
+		*DAC0_CH1DATA = amp;
+	} else {
+		*DAC0_CH0DATA = 0x000;
+		*DAC0_CH1DATA = 0x000;
+		status = play_song(NO_CHANGE);	//get next note after 2 phases
+	}
+	phase = !phase;		//invert it
 
-    //Clear the interrupt 
-    *TIMER1_IFC = 1;
-    if(status == STOP_HERE)
-        PAUSE();
+	//Clear the interrupt 
+	*TIMER1_IFC = 1;
+	//if needed, pause after resetting
+	if (status == STOP_HERE)
+		PAUSE();
 }
 
 /*
@@ -41,17 +43,10 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
  */
 void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 {
-	/*
-	 * TODO handle button pressed event, remember to clear pending
-	 * interrupt 
-	 */
-
-
-	//TODO: Turn of clock could save power, look into later
-	//*CMU_HFPERCLKEN0 &= ~(1 << 6);
 
 	int button_value = *GPIO_PC_DIN;
 
+	// Handler function (common to even and odd pins) is called
 	read_button_value(button_value);
 
 	*GPIO_IFC = *GPIO_IF;
@@ -63,16 +58,10 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
  */
 void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 {
-	/*
-	 * TODO handle button pressed event, remember to clear pending
-	 * interrupt 
-	 */
-
 	int button_value = *GPIO_PC_DIN;
 
+	// Handler function (common to even and odd pins) is called
 	read_button_value(button_value);
 
 	*GPIO_IFC = *GPIO_IF;
 }
-
-

@@ -3,20 +3,12 @@
 #include "sound.h"
 #include "efm32gg.h"
 
-//Smooth frequency, found on yuotube
-#define SMOOTH_F 26515
-/*
- * TODO calculate the appropriate sample period for the sound wave(s) you 
- * want to generate. The core clock (which the timer clock is derived
- * from) runs at 14 MHz by default. Also remember that the timer counter
- * registers are 16 bits. 
- */
 /*
  * The period between sound samples, in clock cycles 
+ * This is the initial setup, will be changed later based on
+ * the required note to be played
  */
 #define   SAMPLE_PERIOD   10000
-
-#define Tuner_frequency 5
 
 /*
  * Declaration of peripheral setup functions 
@@ -27,77 +19,56 @@ void setupGPIO();
 void setupTimer(uint32_t period);
 void setupNVIC();
 //Polling setup
-void setupPolling();
+void setupGPIOirq();
 
 int main(void)
 {
-	//Setup for DAC, common for both Polling and IR solution	
+	//Setup for DAC, common for both Polling and IR solution        
 	setupDAC();
 
 #ifdef POLLING
-	//Setup for polling; turn on clk for GPIO/Timer, set button pins.
-	//TODO: clean up setup files, putting all ir in one setup func.
-	setupPolling();
+	//Setup for polling; turn on clk for GPIO, set button pins.
+	setupGPIO();
 	//Polling 
 	polling_solution();
-	//Timer tester
-	//test_timer();
-
-
 
 #else
 	/*
-	 * Enable interrupt handling 
+	 * Enable interrupt handling and required hardware
 	 */
 	setupGPIO();
 	setupTimer(SAMPLE_PERIOD);
+	//Set up GPIO related registers to generate requests
+	setupGPIOirq();
 	setupNVIC();
-	
-	/*
-	Entering sleep mode while waiting for interrupt, 
-	and returning to sleep mode while exiting IH is necessary to save energy
-	compared to a busy-wait solution. Done by writing 0x6 to SCR.
 
-	Cannot use deep sleep due to clk turned off?
-	*/
-	*SCR = 0x2; 	
+	/*
+	 * Entering sleep mode while waiting for interrupt and returning to
+	 * sleep mode while exiting IRQ handler, this is necessary to save
+	 * energy compared to a busy-wait solution.
+	 * Done by writing 0x6 to SCR.
+	 *
+	 * Cannot use deep sleep due to clk turned off?
+	 * (here setting sleep instead of deep sleep)
+	 */
+	*SCR = 0x2;
 	//__asm__("wfi");
 	//while (1);
-	
 
 #endif
 
 	return 0;
 }
 
-
-
 void setupNVIC()
 {
-	/*
-	 * TODO use the NVIC ISERx registers to enable handling of
-	 * interrupt(s) remember two things are necessary for interrupt
-	 * handling: - the peripheral must generate an interrupt signal - the
-	 * NVIC must be configured to make the CPU handle the signal You will
-	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
-	 * assignment. 
-	 */
 
 	//Enable timer module interrupts
 	*ISER0 |= 1 << 12;
 
 	//Enable GPIO A and C
-	*ISER0 |=0x802;
+	*ISER0 |= 0x802;
 
-}
-
-
-void setupPolling(){
-	//Enable GPIO clock 
-	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;	
-	//BUTTONS
-	*GPIO_PC_MODEL = 0x33333333; /*Setting pins as input pins */
-	*GPIO_PC_DOUT = 0xff;	/*Internal pull-ip resistors for the buttons*/
 }
 
 /*
@@ -118,5 +89,3 @@ void setupPolling(){
  * BURTC_IRQHandler CMU_IRQHandler VCMP_IRQHandler LCD_IRQHandler
  * MSC_IRQHandler AES_IRQHandler EBI_IRQHandler EMU_IRQHandler 
  */
-
-
