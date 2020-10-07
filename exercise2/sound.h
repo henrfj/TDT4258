@@ -17,12 +17,11 @@
 #define DOWNR   (0x7f)
 
 #define CPU_FREQ 14000000
-#define NOTE_DURATION 0.25
-#define BEAT 0.15   //used by polling solution
+#define BEAT 0.35   //used by polling solution
 
 #define GET_PERIOD(freq) ((uint16_t)(CPU_FREQ / (freq*2)))
 #define SET_FREQ(freq) (*TIMER1_TOP = GET_PERIOD(freq))
-#define GET_DURATION(freq, speed) ((uint32_t)(NOTE_DURATION*freq/speed))
+#define GET_DURATION(freq, speed) ((uint32_t)(BEAT*freq/speed))
 
 #define PLAY() (*CMU_HFPERCLKEN0 |= (1 << 6))
 #define PAUSE() (*CMU_HFPERCLKEN0 &= ~(1 << 6))
@@ -49,7 +48,9 @@ void polling_one_period(uint8_t amplitude, float period);
 
 void polling_play_sound(int current_song_id);
 
-void my_sleep_1(int secs);
+void test_timer();
+
+void my_sleep_1(float secs);
 
 void my_sleep_2(float secs);
 

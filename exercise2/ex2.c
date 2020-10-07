@@ -25,6 +25,7 @@ void setupGPIO();
 void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
+void setupPolling();
 
 /*
  * Your code will start executing here 
@@ -32,36 +33,26 @@ void setupNVIC();
 #define POLLING //FIXME define it in a custom target in the Makefile
 int main(void)
 {
-	/*
-	 * Call the peripheral setup functions 
-	 */
 	
+	//Setup for DAC, common for both Polling and IR solution	
 	setupDAC();
 	
-	
-
 	/*
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting 
 	 */
 
-
-	// Testing polling of timer value using LEDs. 
-	// Polling version of the DAC control, reading from the timer
 #ifdef POLLING
-		//Polling setup
-
-	//Enable clock on timer module
-	*CMU_HFPERCLKEN0 |= 1 << 6;
-	//Used manually to count clk_cyckles on CPU
-	*TIMER1_TOP = 0xffffffff;
-	//Enable GPIO clock 
-	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;	
-	//BUTTONS
-	*GPIO_PC_MODEL = 0x33333333; /*Setting pins as input pins */
-	*GPIO_PC_DOUT = 0xff;	/*Internal pull-ip resistors for the buttons*/
-
+	//Setup for polling; turn on clk for GPIO/Timer, set button pins.
+	//TODO: clean up setup files, putting all ir in one setup func.
+	setupPolling();
+	//Polling 
 	polling_solution();
+	//Timer tester
+	//test_timer();
+
+
+
 #else
 	/*
 	 * Enable interrupt handling 
@@ -97,6 +88,15 @@ void setupNVIC()
 	//Enable GPIO A and C
 	*ISER0 |=0x802;
 
+}
+
+
+void setupPolling(){
+	//Enable GPIO clock 
+	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;	
+	//BUTTONS
+	*GPIO_PC_MODEL = 0x33333333; /*Setting pins as input pins */
+	*GPIO_PC_DOUT = 0xff;	/*Internal pull-ip resistors for the buttons*/
 }
 
 /*

@@ -97,15 +97,15 @@ void read_button_value(int button_value){
 // POLLING UNDER HERE
 
 void polling_solution(){
-    int button_value;
+    int button_value = 0xff;
     while(1){ //Polling forever
         button_value = *GPIO_PC_DIN;
         if (button_value == LEFT){
-            polling_play_sound(2);
-        }else if(button_value == UPL){
             polling_play_sound(0);
-        }else if(button_value == RIGHTL){
+        }else if(button_value == UPL){
             polling_play_sound(1);
+        }else if(button_value == RIGHTL){
+            polling_play_sound(2);
         }else if(button_value == DOWNL){
             __asm__("nop");
         }else if(button_value == LEFTR){
@@ -124,20 +124,18 @@ void polling_solution(){
 
 void polling_play_sound(int current_song_id){
     int len = SONG(current_song_id)[0];
-    int cond;
     float frequency;
     uint8_t ampl;
     uint8_t amplitude;
     uint8_t speed;
     float period;
-    float duration;
-    int clk_duration;
-    int track;
+    double duration;
+    double compond_timer;
 
     for (int i = 1; i < len + 1; i++){
         //get frequenct
         frequency = SONG(current_song_id)[i];
-        period = 1/(frequency); //in seconds
+        period = 1.0/(frequency); //in seconds
 
         //get amplitude
         ampl = SONG_AMPL(current_song_id)[i];
@@ -145,24 +143,33 @@ void polling_play_sound(int current_song_id){
 
         //get duration. "1/speed" is no. 1/16 of a beat
         speed = SONG_SPD(current_song_id)[i];
-        duration = (BEAT * frequency / speed); //duartion in second, scaled to match freq
-        clk_duration = duration * 100; // * CPU_FREQ
-
+        duration = (BEAT / speed) * frequency; //duartion in num_periods
         
+        //duration = (BEAT / speed); //duartion in seconds (BEAT = seconds/beat)
+        //clk_duration = duration * CPU_FREQ; // shoul be multiplied by CPU_FREQ
+
+        compond_timer = 0;
+        while(compond_timer < duration){
+            polling_one_period(amplitude, period);
+            compond_timer++;
+        }
+        
+        
+        
+        /*
         cond = 0;
         //Reset timer
-        *TIMER1_CNT = 0;
-        //Start the timer 
-	    *TIMER1_CMD = 1;
+        *TIMER1_CNT = 0;  
         while (!cond){
-            track = *TIMER1_CNT;
+            compond_timer += *TIMER1_CNT;
+            *TIMER1_CNT = 0;
             polling_one_period(amplitude, period);
-            if (track > clk_duration){
+            if (compond_timer > clk_duration){
                 cond = 1;
             }
         }
-        //stop timer
-        *TIMER1_CMD = 0;
+        */
+        
     }
 
 }
@@ -177,20 +184,30 @@ void polling_one_period(uint8_t amplitude, float period){
 	my_sleep_2(period/2);
 }
 
-
-void my_sleep_1(int secs) {
-  unsigned int i,s;
-  for (s=0; s < secs; s++) {
-    for (i=0; i < CPU_FREQ; i++) {
-       // skip CPU cycle or any other statement(s) for making loop 
-       // untouched by C compiler code optimizations
-       __asm__("nop");
+void test_timer(){
+    //Find the scalar for timer 2
+    int button_value;
+    while(1){
+        button_value = *GPIO_PC_DIN;
+        if (button_value == LEFT){
+            my_sleep_2(2);
+        }
+        polling_one_period(0x5f, 0.005);
+        
     }
-  }
+}
+
+
+void my_sleep_1(float secs) {
+  //Uses timer module timer to sleep.
+  //Haven't worked so far.
 }
 
 void my_sleep_2(float secs) {
-  	int roof = secs*CPU_FREQ; //#Cycles to reach "secs"
+    //TODO: test accuracy of sleep
+    float scalar = 11.5;
+    float scaled = secs/scalar;
+  	int roof = scaled*CPU_FREQ; //#Cycles to reach "secs"
     int i = 0;
 	while(i < roof){
 		__asm__("nop");
