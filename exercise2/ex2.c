@@ -57,6 +57,8 @@ int main(void)
 	Entering sleep mode while waiting for interrupt, 
 	and returning to sleep mode while exiting IH is necessary to save energy
 	compared to a busy-wait solution. Done by writing 0x6 to SCR.
+
+	Cannot use deep sleep due to clk turned off?
 	*/
 	*SCR = 0x2; 	
 	//__asm__("wfi");

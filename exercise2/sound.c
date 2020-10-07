@@ -139,7 +139,7 @@ void polling_play_sound(int current_song_id){
 
         //get amplitude
         ampl = SONG_AMPL(current_song_id)[i];
-        amplitude = BASE_AMPL + (ampl<<2);  //amplitude is way too low
+        amplitude = GET_AMPL(ampl);  //amplitude is way too low
 
         //get duration. "1/speed" is no. 1/16 of a beat
         speed = SONG_SPD(current_song_id)[i];

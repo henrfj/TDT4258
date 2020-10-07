@@ -29,8 +29,8 @@
 #define GO_ON 0
 #define STOP_HERE 1
 
-#define BASE_AMPL 0x5f
-#define GET_AMPL(level) (BASE_AMPL+(level<<2))
+#define BASE_AMPL 0x1f
+#define GET_AMPL(level) (BASE_AMPL+(level<<1))
 
 
 
