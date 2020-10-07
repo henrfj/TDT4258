@@ -21,26 +21,18 @@
 /*
  * Declaration of peripheral setup functions 
  */
+void setupDAC();
+//IR-specific setups
 void setupGPIO();
 void setupTimer(uint32_t period);
-void setupDAC();
 void setupNVIC();
+//Polling setup
 void setupPolling();
 
-/*
- * Your code will start executing here 
- */
-#define POLLING //FIXME define it in a custom target in the Makefile
 int main(void)
 {
-	
 	//Setup for DAC, common for both Polling and IR solution	
 	setupDAC();
-	
-	/*
-	 * TODO for higher energy efficiency, sleep while waiting for
-	 * interrupts instead of infinite loop for busy-waiting 
-	 */
 
 #ifdef POLLING
 	//Setup for polling; turn on clk for GPIO/Timer, set button pins.
@@ -61,9 +53,16 @@ int main(void)
 	setupTimer(SAMPLE_PERIOD);
 	setupNVIC();
 	
-	while(1){
+	/*
+	Entering sleep mode while waiting for interrupt, 
+	and returning to sleep mode while exiting IH is necessary to save energy
+	compared to a busy-wait solution. Done by writing 0x6 to SCR.
+	*/
+	*SCR = 0x2; 	
+	//__asm__("wfi");
+	//while (1);
+	
 
-	}
 #endif
 
 	return 0;
