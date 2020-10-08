@@ -1,4 +1,4 @@
-# Example Makefile
+# Makefile
 #
 # Exercise 2, TDT4258
 

@@ -64,7 +64,7 @@ int main(void)
 void setupNVIC()
 {
 
-	//Enable timer module interrupts
+	//Enable timer module interrupt generation
 	*ISER0 |= 1 << 12;
 
 	//Enable GPIO A and C interrupt generation
