@@ -21,7 +21,7 @@
 #define DOWNR   (0x7f)
 
 #define CPU_FREQ 14000000
-#define BEAT 0.35		//value approximately in seconds for a standard note
+#define BEAT 0.35		//value approximately in seconds for a standard beat
 
 /*
  * helper macros to make use of the frequency value stored in the
@@ -42,13 +42,20 @@
 #define BASE_AMPL 0x1f
 #define GET_AMPL(level) (BASE_AMPL+(level<<1))
 
-int get_set_amplitude(int mode);
+//////////////////////////////
+//    INTERRUPT  SOLUTION   //
+//////////////////////////////
 
 int play_song(int mode);
 
+int get_set_amplitude(int mode);
+
 void read_button_value(int button_value);
 
-//POLLING UNDER HERE
+
+//////////////////////////////
+//      POLLING SOLUTION    //
+//////////////////////////////
 
 void polling_solution();
 
