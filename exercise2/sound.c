@@ -223,30 +223,24 @@ void polling_one_period(uint8_t amplitude, float period)
 {
 	*DAC0_CH0DATA = amplitude;
 	*DAC0_CH1DATA = amplitude;
-	my_sleep_2(period / 2);
+	my_sleep(period / 2);
 	*DAC0_CH0DATA = 0x000;
 	*DAC0_CH1DATA = 0x000;
-	my_sleep_2(period / 2);
+	my_sleep(period / 2);
 }
 
 void test_timer()
 {
-	//Find the scalar for timer 2
+	//Find the scalar for my_sleep
 	int button_value;
 	while (1) {
 		button_value = *GPIO_PC_DIN;
 		if (button_value == LEFT) {
-			my_sleep_2(2);
+			my_sleep(2);
 		}
 		polling_one_period(0x5f, 0.005);
 
 	}
-}
-
-void my_sleep_1(float secs)
-{
-	//Uses timer module timer to sleep.
-	//Haven't worked so far.
 }
 
 /*
@@ -255,7 +249,7 @@ void my_sleep_1(float secs)
  * empirical scalar value is used to ensure the (almost) correct
  * correspondence between iterations and input seconds
  */
-void my_sleep_2(float secs)
+void my_sleep(float secs)
 {
 	//TODO: test accuracy of sleep
 	float scalar = 11.5;

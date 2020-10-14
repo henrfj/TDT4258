@@ -52,7 +52,6 @@ int get_set_amplitude(int mode);
 
 void read_button_value(int button_value);
 
-
 //////////////////////////////
 //      POLLING SOLUTION    //
 //////////////////////////////
@@ -63,10 +62,9 @@ void polling_one_period(uint8_t amplitude, float period);
 
 void polling_play_sound(int current_song_id);
 
-void test_timer();
+void my_sleep(float secs);
 
-void my_sleep_1(float secs);
-
-void my_sleep_2(float secs);
+//keep it private
+//void test_timer();
 
 #endif

@@ -9,7 +9,7 @@
 void setupTimer(uint16_t period)
 {
 	//Setup of timer, used by interupt solution
-	
+
 	//Enable clock on timer module
 	*CMU_HFPERCLKEN0 |= 1 << 6;
 	//Set the period of the timer. Fires interrupt and resets counter at period.

@@ -60,14 +60,3 @@ int main(void)
 
 	return 0;
 }
-
-void setupNVIC()
-{
-
-	//Enable timer module interrupt generation
-	*ISER0 |= 1 << 12;
-
-	//Enable GPIO A and C interrupt generation
-	*ISER0 |= 0x802;
-
-}

@@ -6,7 +6,7 @@
 /*
  * TIMER1 interrupt handler 
  */
-void __attribute__ ((interrupt)) TIMER1_IRQHandler()
+void __attribute__((interrupt)) TIMER1_IRQHandler()
 {
 	static uint8_t phase = 1;
 	int amp = get_set_amplitude(NO_CHANGE);
@@ -41,7 +41,7 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 /*
  * GPIO even pin interrupt handler 
  */
-void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
+void __attribute__((interrupt)) GPIO_EVEN_IRQHandler()
 {
 
 	int button_value = *GPIO_PC_DIN;
@@ -56,7 +56,7 @@ void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 /*
  * GPIO odd pin interrupt handler 
  */
-void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
+void __attribute__((interrupt)) GPIO_ODD_IRQHandler()
 {
 	int button_value = *GPIO_PC_DIN;
 
