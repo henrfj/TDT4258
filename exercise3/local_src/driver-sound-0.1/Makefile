@@ -8,7 +8,7 @@ clean:
 
 else
 
-obj-m	:= driver-gamepad.o
+obj-m	:= driver-sound.o
 CFLAGS_MODULE := -mlong-calls
 
 modules modules_install clean:
