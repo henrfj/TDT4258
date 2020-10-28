@@ -1,12 +1,4 @@
-/*
- * This is a demo Linux kernel module.
- */
-
-#include <linux/kernel.h>
-#include <linux/module.h>
-#include <linux/init.h>
-#include "efm32gg.h"
-
+#include "driver-gamepad.h"
 /*
  * gamepad_init - function to insert this module into kernel space
  *
@@ -31,8 +23,12 @@ static struct file_operations fops = {
 char buttons_value; //FIXME put that somewhere else
 
 static int __init gamepad_init(void)
-{
-	printk("Hello World, here is your module speaking\n");
+{	
+	int err;
+
+	printk("Hello World??? :D here is your module speaking\n");
+
+	
 	//Enable GPIO clock
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;
 
@@ -52,15 +48,16 @@ static int __init gamepad_init(void)
 	*GPIO_EXTIFALL = 0xff;	//enable generation on fall
 
 	//character device allocations
+	
 	err	= alloc_chrdev_region(&devno, 0, DEVCNT, DEVNAME);
 	if(err<0) {
 		printk(KERN_WARNING"Error while allocating the device (%d)\n", err);
 		return err;
 	}
-	cdev_init(&dev.gamepad_cdev, &fops);
-	dev.gamepad_cdev.owner = THIS_MODULE;
-	dev.gamepad_cdev.ops = &fops;
-	err = cdev_add(&dev.gamepad_cdev, devno, 1);
+	cdev_init(&gamepad_cdev, &fops);
+	gamepad_cdev.owner = THIS_MODULE;
+	gamepad_cdev.ops = &fops;
+	err = cdev_add(&gamepad_cdev, devno, 1);
 	if(err<0) {
 		printk(KERN_WARNING"Error while adding the char device %s (%d)\n", DEVNAME, err);
 	}
@@ -70,7 +67,6 @@ static int __init gamepad_init(void)
 		printk(KERN_WARNING"Error while creating the device class for %s\n", DEVNAME);
 		return -1;
 	}
-	gamepad_cls->devnode = gamepad_devnode;
 
 	if(!device_create(gamepad_cls, NULL, devno, NULL, DEVNAME)) {
 		printk(KERN_WARNING"Error while creating the device for %s\n", DEVNAME);
@@ -92,14 +88,14 @@ static int gamepad_release(struct inode *inode, struct file *filp) {
 
 static ssize_t gamepad_read(struct file *filp, char __user *buff, size_t count, loff_t *offp) {
 	buttons_value = 0xff; //TODO implement the interrupt to populate this (and remove this line)
-	printk(KERN_INFO"Buttons value is %x\n", buttons_value);
 	if(*offp >= 1) return 0; //EOF
+	printk(KERN_INFO"Buttons value is %x\n", buttons_value);
 	if(copy_to_user(buff, &buttons_value, 1)) {
 		printk(KERN_WARNING"Missing some bytes, failing\n");
 		return -EFAULT;
 	}
-	*offp++; //1 byte read
-	return READ_SIZE;
+	*offp+=1; //1 byte read
+	return 1;
 }
 
 static ssize_t gamepad_write(struct file *filp, const char __user *buff, size_t count, loff_t *offp) {
@@ -124,9 +120,9 @@ static ssize_t gamepad_write(struct file *filp, const char __user *buff, size_t 
 static void __exit gamepad_cleanup(void)
 {
 	 printk(KERN_INFO"Cleaning up the devices\n");
-	 device_destroy(sound_cls, devno);
-	 class_destroy(sound_cls);
-	 cdev_del(&dev.sound_cdev);
+	 device_destroy(gamepad_cls, devno);
+	 class_destroy(gamepad_cls);
+	 cdev_del(&gamepad_cdev);
 	 unregister_chrdev_region(devno, DEVCNT);
 }
 
