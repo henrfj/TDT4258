@@ -44,7 +44,7 @@ static int __init gamepad_init(void)
 	//Enables interrupts on rise and fall values, and interrupt generation
 	// from the GPIO
 	*GPIO_IEN = 0xff;	//enable generation
-	//*GPIO_EXTIRISE = 0xff;	//enable generation on rise
+	*GPIO_EXTIRISE = 0xff;	//enable generation on rise
 	*GPIO_EXTIFALL = 0xff;	//enable generation on fall
 
 	//character device allocations
@@ -73,23 +73,32 @@ static int __init gamepad_init(void)
 		return -1;
 	}
 
+	//Interrupt handling in the kernel
+	request_irq(17, handler, 0, "EVEN", NULL);
+	request_irq(18, handler, 0, "ODD", NULL);
 	return 0;
 }
 
+irqreturn_t handler(int irq, void *dev_id, struct pt_regs *regs){
+	buttons_value = *GPIO_PC_DIN;
+	*GPIO_IFC = *GPIO_IF;
+	return IRQ_HANDLED;
+}
+
 static int gamepad_open(struct inode *inode, struct file *filp) {
-	printk(KERN_INFO"Device file has been opened\n");
+	//printk(KERN_INFO"Device file has been opened\n");
 	return 0;
 }
 
 static int gamepad_release(struct inode *inode, struct file *filp) {
-	printk(KERN_INFO"Device file has been closed\n");
+	//printk(KERN_INFO"Device file has been closed\n");
 	return 0;
 }
 
 static ssize_t gamepad_read(struct file *filp, char __user *buff, size_t count, loff_t *offp) {
-	buttons_value = 0xff; //TODO implement the interrupt to populate this (and remove this line)
+	//buttons_value = *GPIO_PC_DIN; //TODO implement the interrupt to populate this (and remove this line)
 	if(*offp >= 1) return 0; //EOF
-	printk(KERN_INFO"Buttons value is %x\n", buttons_value);
+	//printk(KERN_INFO"Buttons value is %x\n", buttons_value);
 	if(copy_to_user(buff, &buttons_value, 1)) {
 		printk(KERN_WARNING"Missing some bytes, failing\n");
 		return -EFAULT;
@@ -119,11 +128,14 @@ static ssize_t gamepad_write(struct file *filp, const char __user *buff, size_t 
 
 static void __exit gamepad_cleanup(void)
 {
-	 printk(KERN_INFO"Cleaning up the devices\n");
-	 device_destroy(gamepad_cls, devno);
-	 class_destroy(gamepad_cls);
-	 cdev_del(&gamepad_cdev);
-	 unregister_chrdev_region(devno, DEVCNT);
+	printk(KERN_INFO"Cleaning up the devices\n");
+	device_destroy(gamepad_cls, devno);
+	class_destroy(gamepad_cls);
+	cdev_del(&gamepad_cdev);
+	unregister_chrdev_region(devno, DEVCNT);
+	free_irq(17, NULL);
+	free_irq(18, NULL);
+
 }
 
 module_init(gamepad_init);

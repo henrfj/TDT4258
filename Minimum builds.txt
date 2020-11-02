@@ -1,0 +1,15 @@
+//Min build gamepad-driver
+ptxdist clean driver-gamepad &&\
+ptxdist compile driver-gamepad &&\
+ptxdist targetinstall driver-gamepad &&\
+ptxdist targetinstall kernel &&\
+ptxdist image root.romfs &&\
+ptxdist test flash-rootfs
+
+
+//Min build game
+ptxdist clean game &&\
+ptxdist compile game &&
+ptxdist targetinstall game &&\
+ptxdist image root.romfs &&\
+ptxdist test flash-rootfs
