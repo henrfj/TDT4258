@@ -36,13 +36,22 @@ static char *sound_devnode(struct device *dev, umode_t *mode) {
 static int __init sound_init(void)
 {
 	int err;
-	printk(KERN_INFO"Setting up the DAC to enable sound\n");
+	printk(KERN_INFO"Setting up the DAC and timer to enable sound\n");
 	//Make sure the DAC clock is prescaled correctly,
 	//and enables the DAC output to the amplifier
 	*DAC0_CTRL = 0x50010;
 	//Enable the left and right DAC channels
 	*DAC0_CH0CTRL = 1;
 	*DAC0_CH1CTRL = 1;
+
+	//Enable clock on timer module
+	//*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER3;
+	//Set the period of the timer. Fires interrupt and resets counter at period.
+	*TIMER3_TOP = 0xfff;
+	//Enable timer interrupt generation by timer module
+	*TIMER3_IEN = 1;
+	//Start the timer 
+	*TIMER3_CMD = 1;
 
 	//character device allocations
 	err	= alloc_chrdev_region(&devno, 0, DEVCNT, DEVNAME);
@@ -70,8 +79,44 @@ static int __init sound_init(void)
 		return -1;
 	}
 
+	request_irq(19, handler, 0, "TIMER", NULL);
+
+	PAUSE(); //will be started by userspace
 
 	return 0;
+}
+
+
+irqreturn_t handler(int irq, void *dev_id, struct pt_regs *regs){
+	static uint8_t phase = 1;
+	int amp = get_set_amplitude(NO_CHANGE);
+	uint8_t status;
+
+	/*
+	 * Square wave produced by alternating two phases
+	 * static variables are used to keep the value among calls
+	 * the amplitude used is fetched by the library function
+	 * After the two phases the library function to progress inside
+	 * the tone is called, representing a tick in the song
+	 * (more details follow)
+	 */
+
+	if (phase) {
+		*DAC0_CH0DATA = amp;
+		*DAC0_CH1DATA = amp;
+	} else {
+		*DAC0_CH0DATA = 0x000;
+		*DAC0_CH1DATA = 0x000;
+		status = play_song();	//get next note after 2 phases
+	}
+	phase = !phase;		//invert it
+
+	//Clear the interrupt 
+	*TIMER3_IFC = 1;
+	//if needed, pause after resetting
+	if (status == STOP_HERE)
+		PAUSE();
+	return IRQ_HANDLED;
 }
 
 
@@ -116,8 +161,9 @@ static ssize_t sound_write(struct file *filp, const char __user *buff, size_t co
 	for(i=0; i<numpacks; i++) {
 		UNPACK(val[i], &period, &ampl, &speed);
 		printk(KERN_INFO"Written value is %x, (%d, %d, %d)\n", val[i], period, ampl, speed);
-		play_sound(period, ampl, speed);
+		push_values(period, ampl, speed);
 	}
+	PLAY();
 	return count; //never EOF
 }
 
@@ -130,11 +176,13 @@ static ssize_t sound_write(struct file *filp, const char __user *buff, size_t co
 
 static void __exit sound_cleanup(void)
 {
-	 printk(KERN_INFO"Cleaning up the devices\n");
-	 device_destroy(sound_cls, devno);
-	 class_destroy(sound_cls);
-	 cdev_del(&dev.sound_cdev);
-	 unregister_chrdev_region(devno, DEVCNT);
+	printk(KERN_INFO"Cleaning up the devices\n");
+	device_destroy(sound_cls, devno);
+	class_destroy(sound_cls);
+	cdev_del(&dev.sound_cdev);
+	unregister_chrdev_region(devno, DEVCNT);
+	free_irq(19, NULL);
+
 }
 
 module_init(sound_init);
@@ -143,43 +191,83 @@ module_exit(sound_cleanup);
 MODULE_DESCRIPTION("Sound driver...");
 MODULE_LICENSE("GPL");
 
-
-
 //---------------------------------------
 
-void play_sound(uint16_t period, uint8_t ampl, uint8_t speed) {
-	uint8_t amplitude;
-	unsigned int duration;
-	unsigned int compond_timer;
+//arrays without including their length (unlike previous solution)
+uint16_t periods[MAX_SONG];
+uint8_t amplitudes[MAX_SONG];
+uint8_t speeds[MAX_SONG];
+uint8_t length = 0;
 
-	//get amplitude
-	amplitude = GET_AMPL(ampl);	//amplitude is way too low
+int play_song()
+{
+	static uint16_t i = 0;	//index of array in the song
+	static uint16_t timer = 0;	//Return changing note counter
+	uint8_t ret = GO_ON;
 
-	//period is in usec
-	//get duration. "1/speed" is no. 1/16 of a beat
-	duration = GET_DURATION(period, speed);	//duration in num_periods
 
-	//duration = (BEAT / speed); //duration in seconds (BEAT = seconds/beat)
-	//clk_duration = duration * CPU_FREQ; // should be multiplied by CPU_FREQ
+	uint16_t period = periods[i];
+	uint8_t ampl = amplitudes[i];
+	uint8_t speed = speeds[i];
 
-	compond_timer = 0;
-	printk(KERN_WARNING"Duration is %d times (%d us)\n", duration, duration * period);
-	while (compond_timer < duration) {
-		play_period(amplitude, period);
-		compond_timer++;
+	if(length == 0) {
+		PAUSE();
+		return STOP_HERE;
 	}
 
+	/*
+		* the timer variable keeps track on how long the note has
+		* been playing, since the board's timer is set to vibrate
+		* with the note's frequency, the duration of timer depends
+		* on it (defined with the GET_DURATION, more in the header)
+		* in the beginning of a note, it's frequency is set to the
+		* timer, so that the produced sound matches it. When the
+		* expected duration has been reached, the next note is
+		* selected or the playback is stopped if the song is over.
+		*/
+	if (timer == 1) {
+		SET_PERIOD(period);	//set the new frequency on the timer
+		get_set_amplitude(GET_AMPL(ampl));
+	} else if (timer > GET_DURATION(period, speed)) {
+		timer = 0;
+		i++;
+		if (i > length) {
+			i = 0;
+			length = 0; //restore the length for the next sound
+			ret = STOP_HERE;
+		}
+	}
+
+	timer++;
+	/*
+	* if the song is over, the return a different value to
+	* stop the timer from the IRQ handler itself. That cannot
+	* be done here as the interrupt request needs to be cleared
+	* before (and that's done in the handler)
+	*/
+	return ret;
 }
 
-/*
- * Single tick of a note, implementing the same square wave using
- * busy waiting
- */
-void play_period(uint8_t amplitude, uint16_t period) {
-	*DAC0_CH0DATA = amplitude;
-	*DAC0_CH1DATA = amplitude;
-	SLEEP(period / 2);
-	*DAC0_CH0DATA = 0x000;
-	*DAC0_CH1DATA = 0x000;
-	SLEEP(period / 2);
+int get_set_amplitude(int mode)
+{
+	static int amp = BASE_AMPL;
+	static char disabled = 0;
+
+	if (mode == NO_CHANGE) {
+		return amp;
+	} else if(mode == DISABLE) {
+		disabled = 1;
+	} else if(mode == ENABLE) {
+		disabled = 0;
+	}
+	if(disabled) return 0;
+
+	return amp = mode;
+}
+
+void push_values(uint16_t period, uint8_t ampl, uint8_t speed) {
+	periods[length] = period;
+	speeds[length] = speed;
+	amplitudes[length] = ampl;
+	length++;
 }

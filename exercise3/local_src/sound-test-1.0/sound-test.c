@@ -91,7 +91,7 @@ void play_song(uint8_t songnum) {
 }
 int main() {
 	//play_song_test(0);
-	play_song(0);
+	play_song(2);
     return 0;
 }
 

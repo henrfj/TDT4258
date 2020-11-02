@@ -57,6 +57,7 @@
 #define CMU2_HFPERCLKEN0_PRS    (1 << 15)
 #define CMU2_HFPERCLKEN0_GPIO   (1 << 13)
 #define CMU2_HFPERCLKEN0_TIMER1 (1 << 6)
+#define CMU2_HFPERCLKEN0_TIMER3 (1 << 8)
 
 #define CMU_HFCORECLKEN0_DMA (1 << 0)
 
@@ -69,6 +70,18 @@
 #define TIMER1_IFC ((volatile uint32_t*)(TIMER1_BASE + 0x18))
 #define TIMER1_TOP ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
 #define TIMER1_CNT ((volatile uint32_t*)(TIMER1_BASE + 0x24))
+
+// TIMER3
+
+#define TIMER3_BASE 0x40010C00
+
+#define TIMER3_CMD ((volatile uint32_t*)(TIMER3_BASE + 0x04))
+#define TIMER3_IEN ((volatile uint32_t*)(TIMER3_BASE + 0x0c))
+#define TIMER3_IFC ((volatile uint32_t*)(TIMER3_BASE + 0x18))
+#define TIMER3_TOP ((volatile uint32_t*)(TIMER3_BASE + 0x1c))
+#define TIMER3_CNT ((volatile uint32_t*)(TIMER3_BASE + 0x24))
+
+
 
 // NVIC
 

@@ -11,6 +11,7 @@
 #include <linux/types.h>
 #include <linux/uaccess.h>
 #include <linux/delay.h>
+#include <linux/interrupt.h>
 #include "efm32gg.h"
 
 #define DEVNAME "sound_ctrl"
@@ -29,6 +30,8 @@ typedef struct {
 	struct cdev sound_cdev;
 } sound_dev;
 
+/*Timer interrupt handler to play a period*/
+irqreturn_t handler(int irq, void *dev_id, struct pt_regs *regs);
 /* user program opens the driver */
 static int sound_open(struct inode *inode, struct file *filp);
 /* user program closes the driver */
@@ -38,17 +41,6 @@ static ssize_t sound_read(struct file *filp, char __user *buff, size_t count, lo
 /* user program writes to the driver */
 static ssize_t sound_write(struct file *filp, const char __user *buff, size_t count, loff_t *offp);
 
-
-#define BEAT 350000  //value approximately in usec for a standard beat
-
-#define BASE_AMPL 0x1f
-#define GET_AMPL(level) (BASE_AMPL+(level<<1))
-#define GET_DURATION(period, speed) ((BEAT / speed) / period)
-
-#define SLEEP(usec) usleep_range(usec, usec)
-
-void play_sound(uint16_t period, uint8_t ampl, uint8_t speed);
-void play_period(uint8_t amplitude, uint16_t period);
 
 
 #endif // _DRIVER_SOUND_H

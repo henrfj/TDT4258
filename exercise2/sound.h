@@ -32,7 +32,7 @@
  * speed factor depending on the song
  */
 #define GET_PERIOD(freq) ((uint16_t)(CPU_FREQ / (freq*2)))
-#define SET_FREQ(freq) (*TIMER1_TOP = GET_PERIOD(freq))
+#define SET_FREQ(freq) (*TIMER3_TOP = GET_PERIOD(freq))
 #define GET_DURATION(freq, speed) ((uint32_t)(BEAT*freq/speed))
 
 // Set the bit in the clock register to enable-disable the timer

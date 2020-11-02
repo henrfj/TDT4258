@@ -6,10 +6,27 @@ ptxdist targetinstall kernel &&\
 ptxdist image root.romfs &&\
 ptxdist test flash-rootfs
 
+//Min build sound-driver
+ptxdist clean driver-sound &&\
+ptxdist compile driver-sound &&\
+ptxdist targetinstall driver-sound &&\
+ptxdist targetinstall kernel &&\
+ptxdist image root.romfs &&\
+ptxdist test flash-rootfs
+
+
 
 //Min build game
 ptxdist clean game &&\
 ptxdist compile game &&
 ptxdist targetinstall game &&\
+ptxdist image root.romfs &&\
+ptxdist test flash-rootfs
+
+
+//Min build game
+ptxdist clean sound-test &&\
+ptxdist compile sound-test &&
+ptxdist targetinstall sound-test &&\
 ptxdist image root.romfs &&\
 ptxdist test flash-rootfs
