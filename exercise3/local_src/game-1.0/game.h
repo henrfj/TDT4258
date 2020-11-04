@@ -1,9 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+
+#include "test.h"
 
 
 #define LEFT    (0xfe)

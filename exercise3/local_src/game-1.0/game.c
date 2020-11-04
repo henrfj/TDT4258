@@ -2,21 +2,25 @@
 
 int main(int argc, char *argv[])
 {
-	printf("Hello World, I'm game!\n");
+	#testy();
+	game_loop();
+	return 0;
+}
 
-	FILE* gamepad;
-	char button_value;
+void gameloop(){
+	int inputs;
 	while(1){
-		gamepad = fopen("/dev/gamepad", "r");
-		if (!gamepad){
-			printf("gamepad not existing");
-			exit(-1);
-		}
-		fread(&button_value, sizeof(char), 1, gamepad);
-		printf("Value: %x\n", button_value);
-
-		fclose(gamepad);
-		usleep(50000);
+		inputs = run_gamepad_engine();
+		
+		/*
+		TODO: game logic. Produce a new frame based on gamepad inputs.
+		Play sound to mach situation.
+		Pass on to screen engine and sound engine. 
+		*/
+		
+		run_sound_engine();
+		run_screen_engine();
+		sleep(1);
 	}
-	exit(EXIT_SUCCESS);
+
 }
