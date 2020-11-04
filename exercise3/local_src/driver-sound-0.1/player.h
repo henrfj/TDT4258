@@ -7,9 +7,6 @@
 
 //modes for play_song() function
 #define NO_CHANGE -1
-#define DISABLE -2
-#define ENABLE 0
-#define NEW_TONE(id) id
 
 //return values for the play_song() function
 #define GO_ON 0
@@ -28,11 +25,11 @@
  */
 #define GET_CONST(period) ((uint16_t)(CPU_FREQ * (period/2)))
 #define SET_PERIOD(period) (*TIMER3_TOP = GET_CONST(period))
-#define GET_DURATION(period, speed) ((BEAT / speed) / period)
+#define GET_DURATION(period, speed) (BEAT / (speed * period))
 
 // Set the bit in the clock register to enable-disable the timer
-#define PLAY() (get_set_amplitude(ENABLE))
-#define PAUSE() (get_set_amplitude(DISABLE))
+#define PLAY() (*TIMER3_IEN = 1)
+#define PAUSE() (*TIMER3_IEN = 0)
 
 #define BASE_AMPL 0x1f
 #define GET_AMPL(level) (BASE_AMPL+(level<<1))

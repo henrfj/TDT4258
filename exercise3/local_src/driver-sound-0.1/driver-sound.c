@@ -49,7 +49,7 @@ static int __init sound_init(void)
 	//Set the period of the timer. Fires interrupt and resets counter at period.
 	*TIMER3_TOP = 0xfff;
 	//Enable timer interrupt generation by timer module
-	*TIMER3_IEN = 1;
+	//*TIMER3_IEN = 1;
 	//Start the timer 
 	*TIMER3_CMD = 1;
 
@@ -211,7 +211,6 @@ int play_song()
 	uint8_t speed = speeds[i];
 
 	if(length == 0) {
-		PAUSE();
 		return STOP_HERE;
 	}
 
@@ -251,16 +250,9 @@ int play_song()
 int get_set_amplitude(int mode)
 {
 	static int amp = BASE_AMPL;
-	static char disabled = 0;
 
-	if (mode == NO_CHANGE) {
+	if (mode == NO_CHANGE)
 		return amp;
-	} else if(mode == DISABLE) {
-		disabled = 1;
-	} else if(mode == ENABLE) {
-		disabled = 0;
-	}
-	if(disabled) return 0;
 
 	return amp = mode;
 }
