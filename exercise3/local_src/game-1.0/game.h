@@ -1,19 +1,12 @@
 #ifndef GAME_H
 #define GAME_H
 
-
 #include "test.h"
+#include "gamepad_engine.h"
+#include "screen_engine.h"
+#include "sound_engine.h"
 
-
-#define LEFT    (0xfe)
-#define RIGHT   (0xbf)
-#define LEFTR   (0xef)
-#define RIGHTL  (0xfb)
-#define UPL     (0xfd)
-#define UPR     (0xdf)
-#define DOWNL   (0xf7)
-#define DOWNR   (0x7f)
-
+void game_loop();
 
 #endif
 

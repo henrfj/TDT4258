@@ -2,7 +2,7 @@
 
 
 int testy(){
-	printf("Hello World, I'm game!\n");
+	printf("Hello World, I'm test!\n");
 
 	FILE* gamepad;
 	char button_value;
