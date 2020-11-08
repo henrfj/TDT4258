@@ -7,7 +7,7 @@
 #include "screen_engine.h"
 #include "sound_engine.h"
 
-#define BOARD_SIZE
+#define BOARD_SIZE 20
 
 void game_loop();
 void get_input();

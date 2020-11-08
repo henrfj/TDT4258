@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 void game_loop(){
 
 	/*Determine reoccuring game variables*/
-	int board [BOARD_SIZE][BOARD_SIZE] //todo base this on a board size bariable
+	int board [BOARD_SIZE][BOARD_SIZE]
 	int alive;
 	int headPos[2];
 	int fruitPos[2];
