@@ -7,6 +7,7 @@
 #include "sound_engine.h"
 
 void game_loop();
+void run_game_logics();
 
 #endif
 

@@ -17,3 +17,11 @@ char read_button_value(){
 
     return button_value;
 }
+
+void gamepad_test() {
+	char value = read_button_value();
+	if(CHECK_BTN(value, LEFT))
+		printf("LEFT\n");
+	if(CHECK_BTN(value, RIGHT))
+		printf("RIGHT\n");
+}

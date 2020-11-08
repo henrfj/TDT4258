@@ -158,7 +158,7 @@ static ssize_t sound_write(struct file *filp, const char __user *buff, size_t co
 	}
 	numpacks = count / 4; //4 bytes per packet
 	printk("Got %d tones\n", numpacks);
-	for(i=0; i<numpacks; i++) {
+	for(i=0; i<numpacks && i<MAX_SONG; i++) {
 		UNPACK(val[i], &period, &ampl, &speed);
 		printk(KERN_INFO"Written value is %x, (%d, %d, %d)\n", val[i], period, ampl, speed);
 		push_values(period, ampl, speed);
