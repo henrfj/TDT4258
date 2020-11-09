@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 void game_loop(){
 
 	/*Determine reoccuring game variables*/
-	int board [BOARD_SIZE][BOARD_SIZE]
+	int board [BOARD_SIZE][BOARD_SIZE];
 	int alive;
 	int headPos[2];
 	int fruitPos[2];
@@ -116,4 +116,31 @@ void get_input(){
 		//assume that this would be returned if no buttons are pressed? (right, Gabriele?)
 		return 0;
 	}
+}
+
+
+void spawn_fruit(){
+	/*Spawns a single fruit at a random location on the board.
+	Only spawns fruit in a free spot. 
+	Finds a random x and y position on the board, and draws a 2 = a fruit
+	*/
+	int upper = BOARD_SIZE - 1;
+	int lower = 0;
+
+	//Seeding the rng
+	srand(time(0));
+	int x_pos, int y_pos;
+	x_pos = (rand() % (upper - lower + 1)) + lower; 
+	y_pos = (rand() % (upper - lower + 1)) + lower; 
+	
+	if  (board[x_pos][y_pos] == 0){
+		board[x_pos][y_pos] = 1;
+	}
+	else
+	{
+		// Calls itself until it finds a suitable spot for a fruit
+		spawn_fruit();
+	}
+
+
 }
