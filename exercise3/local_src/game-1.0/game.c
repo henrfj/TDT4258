@@ -106,11 +106,11 @@ void reorder_snake(int head[], int keepTail){
 		counter++;
 	}
 	if(keepTail){
-		//increase snakeLength
+		//snake ate fruit, increase tail index to keep the tail after the shift.
 		TAIL_INDEX++;
 	}else{
-		//snake did not eat fruit, wipe old tail
-		BOARD[SNAKE_BODY[TAIL_INDEX][0]]SNAKE_BODY[TAIL_INDEX][1]] = 0;
+		//snake did not eat fruit, wipe the old tail
+		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]]SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
 		//SNAKE_BODY[TAIL_INDEX+1] = {-1};  unneccessary, as TAIL_INDEX makes all data beyond unused.
 
 	}
