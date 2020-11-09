@@ -64,8 +64,9 @@ void game_loop(){
 				spawn_fruit(); //Spawn a new fruit
 
 			//snake crashes into itself
-			}else if (BOARD[headPos[0]][headPos[1]] == 1){
-				//TODO: check if it hits tail
+			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
+			!(headPos[0] == SNAKE_BODY[Tail_INDEX][0] && headPos[1] == SNAKE_BODY[Tail_INDEX][1] )) //checks if the future head position is not the tail
+			{
 				alive = 0;
 				
 				//TODO: play dead sound here
