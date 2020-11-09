@@ -94,24 +94,27 @@ void reorder_snake(int[] *head, int[][] *snakeBody, int [][] *gameBoard, int kee
 	set 0 at gameboard position of the tail.*/
 }
 
-void get_input(){
+
+int get_input(){
 	uint8_t button_value = read_button_value();
+
+	/* Always reference with the left gamepad */
 	if (CHECK_BTN(button_value, LEFT)) {
 		return LEFT
 	} else if (CHECK_BTN(button_value, UPL)) {
-		return UP
+		return UPL
 	} else if (CHECK_BTN(button_value, RIGHTL)) {
 		return RIGHT
 	} else if (CHECK_BTN(button_value, DOWNL)) {
-		return DOWN
+		return DOWNL
 	} else if (CHECK_BTN(button_value, LEFTR)) {
 		return LEFT
 	} else if (CHECK_BTN(button_value, UPR)) {
-		return UP
+		return UPL
 	} else if (CHECK_BTN(button_value, RIGHT)) {
 		return RIGHT
 	} else if (CHECK_BTN(button_value, DOWNR)) {
-		return DOWN
+		return DOWNL
 	}else{
 		//assume that this would be returned if no buttons are pressed? (right, Gabriele?)
 		return 0;
