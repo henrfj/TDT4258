@@ -11,7 +11,6 @@ void game_loop(){
 	/*Determine reoccuring game variables*/
 	int alive;
 	int headPos[2];
-	int fruitPos[2];
 	int direction;
 	uint8_t keepTail;	//If it moves, new tail, if it grown, keep tail
 
@@ -43,7 +42,7 @@ void game_loop(){
 			keepTail = false;
 		
 			//snake eats fruit
-			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){ 
+			if(BOARD[headPos[0]][headPos[1]] == 2){ 
 				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
 				keepTail=true;
 				//TODO: play eating sound here
@@ -102,7 +101,7 @@ void reorder_snake(int head[], int keepTail){
 
 	}
 	//adds new snake head to the BOARD
-	BOARD[*head[0]][*head[1]] = 1;
+	BOARD[head[0]][head[1]] = 1;
 
 }
 
