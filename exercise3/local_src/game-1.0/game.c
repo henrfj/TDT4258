@@ -9,18 +9,20 @@ int main(int argc, char *argv[])
 void game_loop(){
 
 	/*Determine reoccuring game variables*/
-	int board [BOARD_SIZE][BOARD_SIZE];
 	int alive;
 	int headPos[2];
 	int fruitPos[2];
 	int direction;
 	int newDirection;
-	int snakeBody[2][0] //keeps track of the snake - might be switched with a queue if there exists one
+	int snakeBody[2][BOARD_SIZE*BOARD_SIZE] //keeps track of the snake - might be switched with a queue if there exists one
 
 	while(1){
 		//clear board, set alive
+		//clears the board
+		board = {0}{0};
 
-		//TODO: clear board (use 0s for empty, 1 for snake and 2 for fruit)
+		//TODO: hardcode initial snakebody
+		
 		int alive = 1;
 		headPos = [15, 15]
 		direction = RIGHT;
@@ -52,6 +54,8 @@ void game_loop(){
 				keepTail=true;
 				//TODO: play eating sound here
 				//TODO: fruitPos == generateFruit()
+
+			//new snake head appears at snake body
 			}else if (board[headPos[0]][headPos[1]] == 1){
 				alive = 0;
 				keepTail=false;
@@ -67,7 +71,7 @@ void game_loop(){
 				//Do we need a new datastructure? How about a linked list, going from snake end to head?
 				//posible solution 
 			}
-			//reorder_snake(&head, &snakeBody, &gameBoard, keepTail)
+			//reorder_snake(&head, &snakeBody, keepTail)
 			
 			
 
@@ -87,31 +91,34 @@ void game_loop(){
 }
 
 //hacky solution, requires o(n) iterations where n is snake length for each game tick.
-void reorder_snake(int[] *head, int[][] *snakeBody, int [][] *gameBoard, int keepTail){
+void reorder_snake(int[] *head, int[][] *snakeBody, int keepTail){
 	/*shift all elements index by one,
-	remove the last element if keepTail is true
+	remove the last element if keepTail is false
 	set index 0 to head.
 	set 0 at gameboard position of the tail.*/
 }
 
-void get_input(){
+
+int get_input(){
 	uint8_t button_value = read_button_value();
+
+	/* Always reference with the left gamepad */
 	if (CHECK_BTN(button_value, LEFT)) {
 		return LEFT
 	} else if (CHECK_BTN(button_value, UPL)) {
-		return UP
+		return UPL
 	} else if (CHECK_BTN(button_value, RIGHTL)) {
 		return RIGHT
 	} else if (CHECK_BTN(button_value, DOWNL)) {
-		return DOWN
+		return DOWNL
 	} else if (CHECK_BTN(button_value, LEFTR)) {
 		return LEFT
 	} else if (CHECK_BTN(button_value, UPR)) {
-		return UP
+		return UPL
 	} else if (CHECK_BTN(button_value, RIGHT)) {
 		return RIGHT
 	} else if (CHECK_BTN(button_value, DOWNR)) {
-		return DOWN
+		return DOWNL
 	}else{
 		//assume that this would be returned if no buttons are pressed? (right, Gabriele?)
 		return 0;
