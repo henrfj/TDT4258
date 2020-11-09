@@ -141,7 +141,7 @@ void spawn_fruit(){
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	
 	if  (board[x_pos][y_pos] == 0){
-		board[x_pos][y_pos] = 1;
+		board[x_pos][y_pos] = 2;
 	}
 	else
 	{
