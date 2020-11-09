@@ -94,28 +94,28 @@ void game_loop(){
 
 }
 
-//hacky solution, requires o(n) iterations where n is snake length for each game tick.
-//TODO: add tailIndex, shift only when fruit i eaten(snake grows), otherwise skip
+//keeps track of all the snake body positions. snakebody is index shifted by 1, new head is placed at 0,
+// and TAIL_INDEX is increased if keepTail is true(simulating eating)
 void reorder_snake(int head[], int keepTail){
 	
-	//snake ate a fruit, body needs to be shifted by one
-
-	//needs to reorder anyway. fix!
+	int counter = 0;	//current index to be shifted
+	int storedShift[2]; //used to shift the value
+	while(counter <= TAIL_INDEX){
+		storedShift = SNAKE_BODY[count+1];
+		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
+		counter++;
+	}
 	if(keepTail){
-		int counter = 1;
-		int storedShift[2]; //used to shift the value
-		while(SNAKE_BODY[TAIL_INDEX][0] =! -1 ){
-			storedShift = SNAKE_BODY[count+1]
-			SNAKE_BODY[count+1] = SNAKE_BODY[count]
-		}
+		//increase snakeLength
+		TAIL_INDEX++;
 	}else{
-		//snake
-		BOARD[SNAKE_BODY[counter][0]]SNAKE_BODY[counter][1]] = 0; //updates board
-		SNAKE_BODY[TAIL_INDEX] = {-1} //might not work
+		//snake did not eat fruit, wipe old tail
+		BOARD[SNAKE_BODY[TAIL_INDEX][0]]SNAKE_BODY[TAIL_INDEX][1]] = 0;
+		//SNAKE_BODY[TAIL_INDEX+1] = {-1};  unneccessary, as TAIL_INDEX makes all data beyond unused.
 
 	}
 	//adds new snake head to the BOARD
-	BOARD[*head[0]][*head[1]] = 1
+	BOARD[*head[0]][*head[1]] = 1;
 
 }
 
