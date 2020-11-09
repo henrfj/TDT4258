@@ -9,8 +9,9 @@
 
 #define BOARD_SIZE 20
 
+int BOARD[BOARD_SIZE][BOARD_SIZE];
 void game_loop();
-void get_input();
+int get_input();
 
 #endif
 
