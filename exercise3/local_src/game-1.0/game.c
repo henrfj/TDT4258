@@ -22,12 +22,14 @@ void game_loop(){
 		board = {0}{0};
 
 		//TODO: hardcode initial snakebody
+		int body[][]
 		
 		int alive = 1;
 		headPos = [15, 15]
 		direction = RIGHT;
 		int keepTail; //for reorder_snake() solution, should be removed if not used
-		// fruitPos == generateFruit()
+		//Spawns a single initial fruit
+		spawn_fruit();
 		while(alive){
 			/* Checks if direction has changed, and if so, changes direction*/
 
@@ -53,7 +55,7 @@ void game_loop(){
 				board[headPos[0]][headPos[1]] == 1; // adds the new snake head to the board(hence increasing the snake)
 				keepTail=true;
 				//TODO: play eating sound here
-				//TODO: fruitPos == generateFruit()
+				spawn_fruit(); //Spawn a new fruit
 
 			//new snake head appears at snake body
 			}else if (board[headPos[0]][headPos[1]] == 1){

@@ -13,6 +13,7 @@
 
 
 #define BOARD_SIZE 20
+#define MAX_SNAKE 15
 
 int BOARD[BOARD_SIZE][BOARD_SIZE];
 void game_loop();
