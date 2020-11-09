@@ -39,30 +39,30 @@ void game_loop(){
 			snake_movement(headPos, direction);
 
 
-			/*checks the new snake heads position */
-			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){
+			/*checks if the new snake head position grows the snake or kills it.  */
+			keepTail = false;
+		
+			//snake eats fruit
+			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){ 
 				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
 				keepTail=true;
 				//TODO: play eating sound here
 				spawn_fruit(); //Spawn a new fruit
 
-			//new snake head appears at snake body
-			}else if (BOARD[headPos[0]][headPos[1]] == 1){
+			//snake crashes into itself
+			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
+			!(headPos[0] == SNAKE_BODY[Tail_INDEX][0] && headPos[1] == SNAKE_BODY[Tail_INDEX][1] )) //checks if the future head position is not the tail
+			{
 				alive = 0;
-				keepTail=false;
+				
 				//TODO: play dead sound here
+
+			//Snake moves over board - currently treat is as dead
 			}else if ([headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0)
 				alive=0;
-				keepTail=false
-				
-				//snake dies?
 				//TODO: play dead sound here
-			}else
-				//TODO: remove end of snake! Ups, we need to know the position,and be able to update it!
-				//Do we need a new datastructure? How about a linked list, going from snake end to head?
-				//posible solution 
 			}
-			//reorder_snake(&head, &snakeBody, keepTail)
+			reorder_snake(&head, keepTail)
 			
 			
 
@@ -81,22 +81,28 @@ void game_loop(){
 
 }
 
-//hacky solution, requires o(n) iterations where n is snake length for each game tick.
-void reorder_snake(int head[], int snakeBody[][], int keepTail){
-	int counter = 1;
+//keeps track of all the snake body positions. snakebody is index shifted by 1, new head is placed at 0,
+// and TAIL_INDEX is increased if keepTail is true(simulating eating)
+void reorder_snake(int head[], int keepTail){
+	
+	int counter = 0;	//current index to be shifted
 	int storedShift[2]; //used to shift the value
-	while(snakBody[counter+1][0] =! -1 ){
-		storedShift = snakeBody[count+1]
-		snakeBody[count+1] = snakeBody[count]
+	while(counter <= TAIL_INDEX){
+		storedShift = SNAKE_BODY[count+1];
+		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
+		counter++;
 	}
-	//removes the tail
-	if(!keepTail){
-		BOARD[snakeBody[counter][0]]snakeBody[counter][1]] = 0; //updates BOARD
-		snakeBody[counter] = {-1}
+	if(keepTail){
+		//snake ate fruit, increase tail index to keep the tail after the shift.
+		TAIL_INDEX++;
+	}else{
+		//snake did not eat fruit, wipe the old tail
+		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]]SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
+		//SNAKE_BODY[TAIL_INDEX+1] = {-1};  unneccessary, as TAIL_INDEX makes all data beyond unused.
 
 	}
 	//adds new snake head to the BOARD
-	BOARD[*head[0]][*head[1]] = 1
+	BOARD[*head[0]][*head[1]] = 1;
 
 }
 
