@@ -19,9 +19,14 @@
 
 #define OFFSET_X 60
 #define OFFSET_Y 10
-#define IMG_X 60
+#define IMG_X 20
 #define IMG_Y IMG_X
 
-void print_image();
+void screen_init();
+
+void print_image(); //test an image
+void print_sprite(const uint16_t *image, uint16_t off_x, uint16_t off_y);
+
+void screen_cleanup();
 
 #endif

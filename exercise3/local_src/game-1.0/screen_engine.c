@@ -1,35 +1,47 @@
 #include "screen_engine.h"
-#include "foo.h"
+#include "sprites.h"
 
-void print_image() {
-	uint16_t i, j;
-	uint16_t *screen;
-	int f_screen = open("/dev/fb0", O_RDWR);
-	if(f_screen < 0) {
+static int F_screen;
+static uint16_t *Screen;
+
+void screen_init() {
+	F_screen = open("/dev/fb0", O_RDWR);
+	if(F_screen < 0) {
 		fprintf(stderr, "Cannot open screen\n");
 		exit(-1);
 	}
-	screen = mmap(NULL, SCREEN_SIZE*sizeof(uint16_t),
+	Screen = mmap(NULL, SCREEN_SIZE*sizeof(uint16_t),
 			PROT_READ | PROT_WRITE,
-			MAP_SHARED, f_screen, 0);
-	if(screen == MAP_FAILED) {
+			MAP_SHARED, F_screen, 0);
+	if(Screen == MAP_FAILED) {
 		fprintf(stderr, "Cannot map screen error %d\n", errno);
-		return;
+		exit(-2);
 	}
+}
+
+void print_image() {
 	printf("Printing an image to the screen\n");
+	print_sprite(snake, OFFSET_X, OFFSET_Y);
+}
+#define IMG(x,y) image[x+IMG_X*y]
+void print_sprite(const uint16_t *image,
+		uint16_t off_x, uint16_t off_y) {
+	uint16_t i, j;
+	struct fb_copyarea rect;
 	for(i=0; i<IMG_X; i++) {
 		for(j=0; j<IMG_Y; j++) {
-			if(snake_jpg[i][j] != 0xffff)
-				screen[(i+OFFSET_X) + (j+OFFSET_Y)*SCREEN_X] = snake_jpg[i][j];
+			if(IMG(i, j) != 0xffff)
+				Screen[(i+off_x) + (j+off_y)*SCREEN_X] = IMG(i, j);
 		}
 	}
-	struct fb_copyarea rect;
-	rect.dx = OFFSET_X;
-	rect.dy = OFFSET_Y;
+	rect.dx = off_x;
+	rect.dy = off_y;
 	rect.width = IMG_X;
 	rect.height = IMG_Y;
-	ioctl(f_screen, 0x4680, &rect);
+	ioctl(F_screen, 0x4680, &rect);
+}
 
-	munmap(screen, SCREEN_SIZE*sizeof(uint16_t));
-	close(f_screen);
+void screen_cleanup() {
+	munmap(Screen, SCREEN_SIZE*sizeof(uint16_t));
+	close(F_screen);
 }
