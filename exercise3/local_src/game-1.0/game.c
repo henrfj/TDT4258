@@ -14,6 +14,7 @@ void game_loop(){
 		Pass on to screen engine and sound engine. 
 		*/
 		//run_gamepad_engine();
+		print_image();
 		run_game_logics(); 		//Update gamestate
 		//run_sound_engine();		//Play sound based on gamestate
 		//run_screen_engine();	//Update screen based on gamestate

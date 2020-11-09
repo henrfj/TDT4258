@@ -11,25 +11,23 @@ void print_image() {
 	}
 	screen = mmap(NULL, SCREEN_SIZE*sizeof(uint16_t),
 			PROT_READ | PROT_WRITE,
-			MAP_PRIVATE | MAP_ANONYMOUS, f_screen, 0);
+			MAP_SHARED, f_screen, 0);
 	if(screen == MAP_FAILED) {
-		fprintf(stderr, "Cannot map screen error %s\n", strerror(errno));
+		fprintf(stderr, "Cannot map screen error %d\n", errno);
 		return;
 	}
 	printf("Printing an image to the screen\n");
 	for(i=0; i<IMG_X; i++) {
-		for(j=0; j<IMG_X; j++) {
-			screen[i + j*SCREEN_Y] = peach[i][j];
-			//if(write(f_screen, peach[i], IMG_X*sizeof(uint16_t)) <
-			//		IMG_X * sizeof(uint16_t))
-			//	printf("Wrong write..\n");
+		for(j=0; j<IMG_Y; j++) {
+			if(snake_jpg[i][j] != 0xffff)
+				screen[(i+OFFSET_X) + (j+OFFSET_Y)*SCREEN_X] = snake_jpg[i][j];
 		}
 	}
 	struct fb_copyarea rect;
-	rect.dx = 0;
-	rect.dy = 0;
-	rect.width = SCREEN_X;
-	rect.height = SCREEN_Y;
+	rect.dx = OFFSET_X;
+	rect.dy = OFFSET_Y;
+	rect.width = IMG_X;
+	rect.height = IMG_Y;
 	ioctl(f_screen, 0x4680, &rect);
 
 	munmap(screen, SCREEN_SIZE*sizeof(uint16_t));
