@@ -13,7 +13,6 @@ void game_loop(){
 	int headPos[2];
 	int fruitPos[2];
 	int direction;
-	int newDirection;
 	uint8_t keepTail;	//If it moves, new tail, if it grown, keep tail
 
 	while(1){
@@ -25,31 +24,20 @@ void game_loop(){
 		//Hardcode initial snakebody, draws on the board.
 		initialize_snake(headPos);
 		
-		
+
 		int alive = 1;
 		direction = RIGHT;
 		//for reorder_snake() solution, should be removed if not used
 		//Spawns a single initial fruit
 		spawn_fruit();
 		while(alive){
-			/* Checks if direction has changed, and if so, changes direction*/
 
-			/* TODO - make logic so you cant go from left to right!*/ 
-			newDirection = getInput()
-			if (newDirection =! 0){
-				direction = newDirection
-			}
-			
-			/*Sets new snakeHEAD */
-			if(direction==LEFT){
-				headPos[0]--; 
-			}else if (direction == RIGHT){
-				headPos[0]++;
-			}else if(direction == UP){
-				headPos[1]++;
-			}else if(direction == down){
-				headPos[1]--;
-			}
+
+			/* Checks if direction has changed, and if so, changes direction*/
+			direction = snake_direction(direction);
+			/* Moves the snake in the current direction*/
+			snake_movement(headPos, direction);
+
 
 			/*checks the new snake heads position */
 			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){
@@ -139,22 +127,67 @@ int get_input(){
 	}
 }
 
+int snake_direction(int direction){
+
+	//Get a new directional input from the gamepad	
+	int newDirection = get_input();
+
+	//Checks if it is a leagal move, can only move 90 degree, not 180
+	if (newDirection == 0){
+		//No change
+		return direction;
+	} else if ((newDirection==LEFT && direction==RIGHT) ||
+	 (newDirection==RIGHT && direction==LEFT)){
+		//No change
+		return direction;
+	}else if((newDirection==UPL && direction==DOWNL) ||
+	 (newDirection==DOWNL && direction==UPL)){
+		//No change
+		return direction;
+
+	}
+	//Change as it is a legal move
+	return newDirection;
+}
+
+void snake_movement(int headPos[2], int direction){
+	/*Sets new snakeHEAD postition, based on direction */
+	if(direction==LEFT){
+		headPos[0]--;
+	}else if (direction == RIGHT){
+		headPos[0]++;
+	}else if(direction == UPL){
+		headPos[1]++;
+	}else if(direction == DOWNL){
+		headPos[1]--;
+	}
+}
+
+
+
 
 void spawn_fruit(){
-	/*Spawns a single fruit at a random location on the BOARD.
+	/*
+	Spawns a single fruit at a random location on the BOARD.
 	Only spawns fruit in a free spot. 
 	Finds a random x and y position on the BOARD, and draws a 2 = a fruit
+	*/
+
+	/* 
+	Setting upper and lower bound of the rand-function.
+	This will be indexes, so subracting one from board size
 	*/
 	int upper = BOARD_SIZE - 1;
 	int lower = 0;
 
-	//Seeding the rng
+	//Seeding the rand function.
 	srand(time(0));
 	int x_pos, int y_pos;
 	x_pos = (rand() % (upper - lower + 1)) + lower; 
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	
 	if  (BOARD[x_pos][y_pos] == 0){
+		//Fruits are represented as a 2 on the board
 		BOARD[x_pos][y_pos] = 2;
 	}
 	else
@@ -166,9 +199,10 @@ void spawn_fruit(){
 
 }
 
-void initialize_snake(int headPos[]){}
+void initialize_snake(int headPos[2]){
 	/*
 	Hardcode the new snakebody onto the board.
+	Uses headposition, and draws a three-sized snake.
 	*/
 
 	//Head
