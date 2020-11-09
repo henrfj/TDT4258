@@ -13,11 +13,19 @@
 
 
 #define BOARD_SIZE 20
+#define MAX_SNAKE 15
 
-int BOARD[BOARD_SIZE][BOARD_SIZE];
+static int BOARD[BOARD_SIZE][BOARD_SIZE];
+static int SNAKE_BODY[MAX_SNAKE][2] //keeps track of the snake
+static int TAIL_INDEX;
+
+
+
+
 void game_loop();
 int get_input();
 void spawn_fruit();
+void initialize_snake(int headPos);
 
 #endif
 

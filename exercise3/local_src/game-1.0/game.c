@@ -14,20 +14,23 @@ void game_loop(){
 	int fruitPos[2];
 	int direction;
 	int newDirection;
-	int snakeBody[BOARD_SIZE*BOARD_SIZE][2] //keeps track of the snake - might be switched with a queue if there exists one
+	uint8_t keepTail;	//If it moves, new tail, if it grown, keep tail
 
 	while(1){
-		//clear board, set alive
-		//clears the board
-		board = {0}{0};
+		//clear BOARD, set alive
+		//clears the BOARD
+		BOARD = {0}{0};
+		headPos = [15, 15];
 
-		//TODO: hardcode initial snakebody
+		//Hardcode initial snakebody, draws on the board.
+		initialize_snake(headPos);
+		
 		
 		int alive = 1;
-		headPos = [15, 15]
 		direction = RIGHT;
-		int keepTail; //for reorder_snake() solution, should be removed if not used
-		// fruitPos == generateFruit()
+		//for reorder_snake() solution, should be removed if not used
+		//Spawns a single initial fruit
+		spawn_fruit();
 		while(alive){
 
 			/* Checks if direction has changed, and if so, changes direction*/
@@ -55,12 +58,13 @@ void game_loop(){
 		
 			//snake eats fruit
 			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){ 
+				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
 				keepTail=true;
 				//TODO: play eating sound here
-				//TODO: fruitPos == generateFruit()
+				spawn_fruit(); //Spawn a new fruit
 
 			//snake crashes into itself
-			}else if (board[headPos[0]][headPos[1]] == 1){
+			}else if (BOARD[headPos[0]][headPos[1]] == 1){
 				//TODO: check if it hits tail
 				alive = 0;
 				
@@ -110,7 +114,7 @@ void reorder_snake(int head[], int keepTail){
 		SNAKE_BODY[TAIL_INDEX] = {-1} //might not work
 
 	}
-	//adds new snake head to the board
+	//adds new snake head to the BOARD
 	BOARD[*head[0]][*head[1]] = 1
 
 }
@@ -144,9 +148,9 @@ int get_input(){
 
 
 void spawn_fruit(){
-	/*Spawns a single fruit at a random location on the board.
+	/*Spawns a single fruit at a random location on the BOARD.
 	Only spawns fruit in a free spot. 
-	Finds a random x and y position on the board, and draws a 2 = a fruit
+	Finds a random x and y position on the BOARD, and draws a 2 = a fruit
 	*/
 	int upper = BOARD_SIZE - 1;
 	int lower = 0;
@@ -157,8 +161,8 @@ void spawn_fruit(){
 	x_pos = (rand() % (upper - lower + 1)) + lower; 
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	
-	if  (board[x_pos][y_pos] == 0){
-		board[x_pos][y_pos] = 2;
+	if  (BOARD[x_pos][y_pos] == 0){
+		BOARD[x_pos][y_pos] = 2;
 	}
 	else
 	{
@@ -167,4 +171,23 @@ void spawn_fruit(){
 	}
 
 
+}
+
+void initialize_snake(int headPos[]){}
+	/*
+	Hardcode the new snakebody onto the board.
+	*/
+
+	//Head
+	SNAKE_BODY[0] = headPos;
+	BOARD[snakeBody[0][0]][SNAKE_BODY[0][1]] = 1;
+
+	//Middle
+	SNAKE_BODY[1] = [headPos[0] - 1, headPos[1]];
+	BOARD[SNAKE_BODY[1][0]][SNAKE_BODY[1][1]] = 1;
+
+	//Tail
+	SNAKE_BODY[2] = [headPos[0] - 2, headPos[1]];
+	BOARD[SNAKE_BODY[2][0]][SNAKE_BODY[2][1]] = 1;
+	TAIL_INDEX = 2;
 }
