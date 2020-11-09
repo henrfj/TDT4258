@@ -14,7 +14,7 @@ void game_loop(){
 	int fruitPos[2];
 	int direction;
 	int newDirection;
-	int snakeBody[2][BOARD_SIZE*BOARD_SIZE] //keeps track of the snake - might be switched with a queue if there exists one
+	int snakeBody[BOARD_SIZE*BOARD_SIZE][2] //keeps track of the snake - might be switched with a queue if there exists one
 
 	while(1){
 		//clear board, set alive
@@ -93,11 +93,22 @@ void game_loop(){
 }
 
 //hacky solution, requires o(n) iterations where n is snake length for each game tick.
-void reorder_snake(int[] *head, int[][] *snakeBody, int keepTail){
-	/*shift all elements index by one,
-	remove the last element if keepTail is false
-	set index 0 to head.
-	set 0 at gameboard position of the tail.*/
+void reorder_snake(int head[], int snakeBody[][], int keepTail){
+	int counter = 1;
+	int storedShift[2]; //used to shift the value
+	while(snakBody[counter+1][0] =! -1 ){
+		storedShift = snakeBody[count+1]
+		snakeBody[count+1] = snakeBody[count]
+	}
+	//removes the tail
+	if(!keepTail){
+		BOARD[snakeBody[counter][0]]snakeBody[counter][1]] = 0; //updates board
+		snakeBody[counter] = {-1}
+
+	}
+	//adds new snake head to the board
+	BOARD[*head[0]][*head[1]] = 1
+
 }
 
 
