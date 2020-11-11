@@ -41,6 +41,23 @@ void print_sprite(const uint16_t *image,
 	ioctl(F_screen, 0x4680, &rect);
 }
 
+#define BOARD(x,y) gameboard[x+y]
+void print_gameboard(const uint16_t *gameboard){
+    uint16_t i, j;
+    struct fb_copyarea rect;
+
+    for(i=0; i< SCREEN_X; i++){
+        for(j=0; j < SCREEN_Y; j++){
+            Screen[i + (j*SCREEN_X)] = BOARD(i,j);
+        }
+    }
+
+    rect.width = SCREEN_X;
+    rect.height = SCREEN_Y;
+
+    ioctl(F_screen, 0x4680, &rect);
+}
+
 void screen_cleanup() {
 	munmap(Screen, SCREEN_SIZE*sizeof(uint16_t));
 	close(F_screen);

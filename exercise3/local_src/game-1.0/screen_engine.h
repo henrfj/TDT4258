@@ -26,6 +26,7 @@ void screen_init();
 
 void print_image(); //test an image
 void print_sprite(const uint16_t *image, uint16_t off_x, uint16_t off_y);
+void print_gameboard(const uint16_t *image);
 
 void screen_cleanup();
 
