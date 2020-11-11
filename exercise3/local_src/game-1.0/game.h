@@ -22,10 +22,11 @@ int TAIL_INDEX;
 /////////////////////////////
 void game_loop();
 int get_input();
-void spawn_fruit();
+int spawn_fruit();
 void initialize_snake(int headPos[2]);
 int snake_direction(int direction);
 void snake_movement(int headPos[2], int direction);
+void print_board();
 /////////////////////////////
 #endif
 

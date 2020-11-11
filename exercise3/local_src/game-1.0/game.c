@@ -68,7 +68,7 @@ void game_loop(){
 		}
 		
 		/*the user is dead, requires a keypress to restart the game */
-		while(!alive){
+		while(alive == 0){
 			if (get_input() != 0){
 				alive = 1;
 			}
@@ -93,7 +93,7 @@ void reorder_snake(int head[], int grow){
 		TAIL_INDEX++;
 	}else{
 		//snake did not eat fruit, wipe the old tail
-		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]]SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
+		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]][SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
 		//SNAKE_BODY[TAIL_INDEX+1] = {-1};  unneccessary, as TAIL_INDEX makes all data beyond unused.
 
 	}
@@ -165,7 +165,7 @@ void snake_movement(int headPos[2], int direction){
 	}
 }
 
-void spawn_fruit(){
+int spawn_fruit(){
 	/*
 	Spawns a single fruit at a random location on the BOARD.
 	Only spawns fruit in a free spot. 
@@ -188,11 +188,11 @@ void spawn_fruit(){
 	if  (BOARD[x_pos][y_pos] == 0){
 		//Fruits are represented as a 2 on the board
 		BOARD[x_pos][y_pos] = 2;
-	}
-	else
-	{
+		return 1;
+
+	}else{
 		// Calls itself until it finds a suitable spot for a fruit
-		spawn_fruit();
+		return spawn_fruit();
 	}
 
 
@@ -226,7 +226,7 @@ void initialize_snake(int headPos[2]){
 void print_board(){
 	for(int i = 0; i < BOARD_SIZE; i++){
 		for(int j = 0; j < BOARD_SIZE; j++){
-			printf(BOARD[i][j]);
+			printf("%d", BOARD[i][j]);
 		}
 	}
 }
