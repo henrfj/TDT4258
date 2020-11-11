@@ -49,7 +49,6 @@ void game_loop(){
 
 			//snake eats fruit
 			if(BOARD[headPos[0]][headPos[1]] == 2){ 
-				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
 				grow=TRUE;
 				//TODO: play eating sound here
 				spawn_fruit(); //Spawn a new fruit
