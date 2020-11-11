@@ -9,10 +9,12 @@ int main(int argc, char *argv[])
 void game_loop(){
 
 	/*Determine reoccuring game variables*/
+	//TODO: can change the sizes of the variables, to not waste so much
+	// same goes for global variables in the h file.
 	int alive;
 	int headPos[2];
 	int direction;
-	uint8_t keepTail;	//If it moves, new tail, if it grown, keep tail
+	int keepTail;	//If it moves, new tail, if it grown, keep tail
 
 	while(1){
 		//clear BOARD, set alive
@@ -22,25 +24,23 @@ void game_loop(){
 
 		//Hardcode initial snakebody, draws on the board.
 		initialize_snake(headPos);
-		
+		//Spawns a single initial fruit
+		spawn_fruit();
 
 		int alive = 1;
 		direction = RIGHT;
 		//for reorder_snake() solution, should be removed if not used
-		//Spawns a single initial fruit
-		spawn_fruit();
+		
 		while(alive){
-
 
 			/* Checks if direction has changed, and if so, changes direction*/
 			direction = snake_direction(direction);
 			/* Moves the snake in the current direction*/
 			snake_movement(headPos, direction);
 
-
 			/*checks if the new snake head position grows the snake or kills it.  */
 			keepTail = false;
-		
+
 			//snake eats fruit
 			if(BOARD[headPos[0]][headPos[1]] == 2){ 
 				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
@@ -62,14 +62,10 @@ void game_loop(){
 				//TODO: play dead sound here
 			}
 			reorder_snake(&head, keepTail)
-			
-			
-
-			//run_gamepad_engine();
-			//run_sound_engine();	//Play sound based on gamestate
-			//run_screen_engine();	//Update screen based on gamestate
+			//TODO: Call function to update the board. Clear + push board
 			sleep(1);				//Framerate
 		}
+		
 		/*the user is dead, requires a keypress to restart the game */
 		while(!alive){
 			if (get_input() != 0){
@@ -87,7 +83,7 @@ void reorder_snake(int head[], int keepTail){
 	int counter = 0;	//current index to be shifted
 	int storedShift[2]; //used to shift the value
 	while(counter <= TAIL_INDEX){
-		storedShift = SNAKE_BODY[count+1];
+		storedShift = SNAKE_BODY[counter+1];
 		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
 		counter++;
 	}
@@ -187,7 +183,7 @@ void spawn_fruit(){
 
 	//Seeding the rand function.
 	srand(time(0));
-	int x_pos, int y_pos;
+	int x_pos, y_pos;
 	x_pos = (rand() % (upper - lower + 1)) + lower; 
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	
@@ -222,4 +218,12 @@ void initialize_snake(int headPos[2]){
 	SNAKE_BODY[2] = [headPos[0] - 2, headPos[1]];
 	BOARD[SNAKE_BODY[2][0]][SNAKE_BODY[2][1]] = 1;
 	TAIL_INDEX = 2;
+}
+
+void print_board(){
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
+			printf(BOARD[i][j]);
+		}
+	}
 }
