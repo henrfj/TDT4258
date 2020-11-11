@@ -63,9 +63,10 @@ void game_loop(){
 				//TODO: play dead sound here
 			}
 			reorder_snake(&head, keepTail)
-			
+			//TODO: Call function to update the board. Clear + push board
 			sleep(1);				//Framerate
 		}
+		
 		/*the user is dead, requires a keypress to restart the game */
 		while(!alive){
 			if (get_input() != 0){
