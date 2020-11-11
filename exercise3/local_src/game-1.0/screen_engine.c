@@ -48,14 +48,24 @@ void print_gameboard(const uint16_t *gameboard){
 
     for(i=0; i< SCREEN_X; i++){
         for(j=0; j < SCREEN_Y; j++){
-            Screen[i + (j*SCREEN_X)] = BOARD(i,j);
+            Screen[i + (j*SCREEN_X)] = color(BOARD(i,j));
         }
     }
 
+    rect.dx = 0;
+    rect.dy = 0;
     rect.width = SCREEN_X;
     rect.height = SCREEN_Y;
 
     ioctl(F_screen, 0x4680, &rect);
+}
+
+uint16_t color(uint16_t tileState){
+    if(tileState == 0){
+        return 0xffff;
+    }else if (tileState == 1 || 2){
+        return 0x0000;
+    }
 }
 
 void screen_cleanup() {
