@@ -19,7 +19,8 @@ void game_loop(){
 	while(1){
 		//clear BOARD, set alive
 		//clears the BOARD
-		BOARD = {0}{0};
+		//BOARD = {0}{0};
+		memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 		headPos[0] = 15;
 		headPos[1] = 15;
 
@@ -61,7 +62,7 @@ void game_loop(){
 				alive=0;
 				//TODO: play dead sound here
 			}
-			reorder_snake(headPos, keepTail);
+			reorder_snake(headPos, grow);
 			//TODO: Call function to update the board. Clear + push board
 			sleep(1);				//Framerate
 		}
