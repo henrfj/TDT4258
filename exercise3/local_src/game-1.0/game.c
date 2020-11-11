@@ -15,7 +15,7 @@ void game_loop(){
 	int headPos[2];
 	int fruitPos[2];
 	int direction;
-	int keepTail;	//If it moves, new tail, if it grown, keep tail
+	int grow;	//If it moves, new tail, if it grown, keep tail
 
 	while(1){
 		//clear BOARD, set alive
@@ -38,14 +38,13 @@ void game_loop(){
 			direction = snake_direction(direction);
 			/* Moves the snake in the current direction*/
 			snake_movement(headPos, direction);
-
 			/*checks if the new snake head position grows the snake or kills it.  */
-			keepTail = false;
+			grow = FALSE;
 
 			//snake eats fruit
 			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){ 
 				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
-				keepTail=true;
+				grow=TRUE;
 				//TODO: play eating sound here
 				spawn_fruit(); //Spawn a new fruit
 
@@ -62,8 +61,8 @@ void game_loop(){
 				alive=0;
 				//TODO: play dead sound here
 			}
-			reorder_snake(&head, keepTail)
-			//TODO: Call function to update the board. Clear + push board
+			reorder_snake(&head, grow);
+			print_gameboard(BOARD);
 			sleep(1);				//Framerate
 		}
 		
@@ -78,8 +77,8 @@ void game_loop(){
 }
 
 //keeps track of all the snake body positions. snakebody is index shifted by 1, new head is placed at 0,
-// and TAIL_INDEX is increased if keepTail is true(simulating eating)
-void reorder_snake(int head[], int keepTail){
+// and TAIL_INDEX is increased if grow is true(simulating eating)
+void reorder_snake(int head[], int grow){
 	
 	int counter = 0;	//current index to be shifted
 	int storedShift[2]; //used to shift the value
@@ -88,7 +87,7 @@ void reorder_snake(int head[], int keepTail){
 		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
 		counter++;
 	}
-	if(keepTail){
+	if(grow){
 		//snake ate fruit, increase tail index to keep the tail after the shift.
 		TAIL_INDEX++;
 	}else{
@@ -165,9 +164,6 @@ void snake_movement(int headPos[2], int direction){
 	}
 }
 
-
-
-
 void spawn_fruit(){
 	/*
 	Spawns a single fruit at a random location on the BOARD.
@@ -184,7 +180,7 @@ void spawn_fruit(){
 
 	//Seeding the rand function.
 	srand(time(0));
-	int x_pos, int y_pos;
+	int x_pos, y_pos;
 	x_pos = (rand() % (upper - lower + 1)) + lower; 
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	

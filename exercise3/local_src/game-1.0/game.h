@@ -12,10 +12,13 @@
 /////////////////////////////
 #define BOARD_SIZE 20
 #define MAX_SNAKE 15
+#define TRUE 1
+#define FALSE 0
 /////////////////////////////
-static int BOARD[BOARD_SIZE][BOARD_SIZE];
-static int SNAKE_BODY[MAX_SNAKE][2];
-static int TAIL_INDEX;
+//TODO: make static
+int BOARD[BOARD_SIZE][BOARD_SIZE];
+int SNAKE_BODY[MAX_SNAKE][2];
+int TAIL_INDEX;
 /////////////////////////////
 void game_loop();
 int get_input();
