@@ -3,6 +3,7 @@
 
 static int F_screen;
 static uint16_t *Screen;
+#define SCREEN(x, y) Screen[(x) + SCREEN_X*(y)]
 
 void screen_init() {
 	F_screen = open("/dev/fb0", O_RDWR);
@@ -17,55 +18,98 @@ void screen_init() {
 		fprintf(stderr, "Cannot map screen error %d\n", errno);
 		exit(-2);
 	}
+	memset(Screen, 0, SCREEN_SIZE*sizeof(uint16_t));
+	screen_update(0, 0, SCREEN_X, SCREEN_Y);
 }
+
+void screen_update(uint16_t x, uint16_t y,
+		uint16_t width, uint16_t height) {
+	struct fb_copyarea rect;
+	rect.dx = x;
+	rect.dy = y;
+	rect.width = width;
+	rect.height = height;
+	ioctl(F_screen, 0x4680, &rect);
+}	
 
 void print_image() {
 	printf("Printing an image to the screen\n");
-	print_sprite(snake, OFFSET_X, OFFSET_Y);
+	print_sprite(head, 0, 60);
+	print_sprite(tail, 60, 60);
+	print_sprite(snake, 60, 0);
 }
-#define IMG(x,y) image[x+IMG_X*y]
+#define IMG_SIZE 12
+#define IMG(x,y) image[x+IMG_SIZE*y] //FIXME
 void print_sprite(const uint16_t *image,
 		uint16_t off_x, uint16_t off_y) {
 	uint16_t i, j;
-	struct fb_copyarea rect;
-	for(i=0; i<IMG_X; i++) {
-		for(j=0; j<IMG_Y; j++) {
+	for(i=0; i<IMG_SIZE; i++) {
+		for(j=0; j<IMG_SIZE; j++) {
 			if(IMG(i, j) != 0xffff)
-				Screen[(i+off_x) + (j+off_y)*SCREEN_X] = IMG(i, j);
+				SCREEN(i+off_x, j+off_y) = IMG(i, j);
 		}
 	}
-	rect.dx = off_x;
-	rect.dy = off_y;
-	rect.width = IMG_X;
-	rect.height = IMG_Y;
-	ioctl(F_screen, 0x4680, &rect);
+	//screen_update(off_x, off_y, IMG_SIZE, IMG_SIZE);
 }
 
-#define BOARD(x,y) gameboard[x+y]
+//x and y are in screen size
+#define BOARD(x,y) gameboard[(x/BOARD_RATIO)+(y/BOARD_RATIO)*BOARD_SIDE]
 void print_gameboard(const uint16_t *gameboard){
     uint16_t i, j;
-    struct fb_copyarea rect;
 
     for(i=0; i< SCREEN_X; i++){
-        for(j=0; j < SCREEN_Y; j++){
-            Screen[i + (j*SCREEN_X)] = color(BOARD(i,j));
-        }
+		for(j=0; j < SCREEN_Y; j++){
+			if(i>BOARD_SCREEN) {
+				SCREEN(i, j) = PAD_COLOR;
+			} else {
+				//SCREEN(i, j) = color(BOARD(i,j));
+				color_tile(gameboard, i, j);
+			}
+		}
     }
-
-    rect.dx = 0;
-    rect.dy = 0;
-    rect.width = SCREEN_X;
-    rect.height = SCREEN_Y;
-
-    ioctl(F_screen, 0x4680, &rect);
+	screen_update(0, 0, SCREEN_X, SCREEN_Y);
+}
+void print_test_board() {
+	uint16_t board[BOARD_SIDE*BOARD_SIDE] = {
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,0,0,0,0,
+		0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,1,0,0,0,0,
+		0,0,0,0,0,3,0,0,0,1,0,0,0,0,0,1,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,5,0,
+		0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,0,
+		0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0
+	};
+	print_gameboard(board);
 }
 
 uint16_t color(uint16_t tileState){
     if(tileState == 0){
         return 0xffff;
-    }else if (tileState == 1 || 2){
+    }else if (tileState == 1 || tileState == 2){
         return 0x0000;
     }
+	return PAD_COLOR;
+}
+void color_tile(uint16_t *gameboard, uint8_t x, uint8_t y){
+	uint16_t tileState = BOARD(x,y);
+    if(tileState == 0){
+        SCREEN(x, y) = BG_COLOR;
+    } else if (tileState == 1 || tileState == 2){
+        SCREEN(x, y) = SNK_COLOR;
+    } else if(x % BOARD_RATIO == 0 && y % BOARD_RATIO == 0) {
+		//here print sprites
+		if(tileState == 3) {
+			print_sprite(tail, x, y);
+		}
+		if(tileState == 4) {
+			print_sprite(head, x, y);
+		}
+		if(tileState == 5) {
+			print_sprite(apple, x, y);
+		}
+	}
 }
 
 void screen_cleanup() {

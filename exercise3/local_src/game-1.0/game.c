@@ -3,7 +3,8 @@
 int main(int argc, char *argv[])
 {
 	screen_init();
-	print_image(); //just test
+	//print_image(); //just test
+	print_test_board(); //just test
 
 	game_loop();
 	screen_cleanup();

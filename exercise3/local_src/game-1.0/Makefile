@@ -15,7 +15,7 @@ game: game.o test.o sound_engine.o gamepad_engine.o screen_engine.o
 all: game
 
 clean:
-	-rm -f game
+	-rm -f game *.o
 
 install:
 

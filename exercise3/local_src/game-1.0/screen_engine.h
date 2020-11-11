@@ -11,23 +11,30 @@
 #include <sys/mman.h>
 #include <inttypes.h>
 #include <errno.h>
+#include <string.h>
 #include <linux/fb.h>
 
 #define SCREEN_X 320
 #define SCREEN_Y 240
 #define SCREEN_SIZE (SCREEN_X*SCREEN_Y)
 
-#define OFFSET_X 60
-#define OFFSET_Y 10
-#define IMG_X 20
-#define IMG_Y IMG_X
+#define PAD_COLOR 0x7777
+#define BG_COLOR 0x0000
+#define SNK_COLOR 0x03e8
+
+#define BOARD_SIDE 20 //in the matrix
+#define BOARD_SCREEN SCREEN_Y //projected on screen
+#define BOARD_RATIO (BOARD_SCREEN/BOARD_SIDE)
 
 void screen_init();
+void screen_update(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
 void print_image(); //test an image
 void print_sprite(const uint16_t *image, uint16_t off_x, uint16_t off_y);
 void print_gameboard(const uint16_t *image);
-void color(uint16_t tileState);
+void print_test_board();
+uint16_t color(uint16_t tileState);
+void color_tile(uint16_t *gameboard, uint8_t x, uint8_t y);
 
 void screen_cleanup();
 
