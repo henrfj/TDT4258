@@ -26,7 +26,7 @@ void test_spawn_fruit(){
 	//Spawn three fruits
 	printf("Spawning three fruits and printing the board\n");
 	//BOARD = {0}{0};
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	spawn_fruit();
 	spawn_fruit();
 	spawn_fruit();
@@ -38,7 +38,7 @@ void test_spawn_fruit(){
 void test_initialize_snake(){
 	printf("initialize Snake and printing board\n");
 	//BOARD = {0}{0};
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	int headPos = {15, 15};
 	initialize_snake(headPos);
 	print_board();
@@ -49,7 +49,7 @@ void test_reorder_snake(){
 	printf("First: initialize a snake");
 	int head[2] = {15, 15};
 	//BOARD = {0}{0};
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	initialize_snake(head);
 	printf("Second: move snake DOWNL");
 	snake_movement(head, DOWNL);
@@ -61,7 +61,7 @@ void test_reorder_snake(){
 
 void test_snake_movement(){
 	// DOWNL
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	int headPos[2] = {15, 15};
 	printf("Old headPos:\n");
 	for(int i = 0; i<2; i++){
@@ -75,7 +75,7 @@ void test_snake_movement(){
 		printf("%d\n" , headPos[i]);
 	}
 	// UPL
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	headPos[0] = 15;
 	headPos[1] =15;
 	printf("Old headPos:\n");
@@ -90,7 +90,7 @@ void test_snake_movement(){
 		printf("%d\n" , headPos[i]);
 	}
 	// RIGHT
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	headPos[0] = 15;
 	headPos[1] =15;
 	printf("Old headPos:\n");
@@ -106,7 +106,7 @@ void test_snake_movement(){
 	}
 	//LEFT 
 	
-	memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+	memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 	headPos[0] = 15;
 	headPos[1] =15;
 	printf("Old headPos:\n");

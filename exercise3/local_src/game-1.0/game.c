@@ -20,7 +20,7 @@ void game_loop(){
 		//clear BOARD, set alive
 		//clears the BOARD
 		//BOARD = {0}{0};
-		memset(BOARD, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+		memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 		headPos[0] = 15;
 		headPos[1] = 15;
 
@@ -58,7 +58,7 @@ void game_loop(){
 				//TODO: play dead sound here
 
 			//Snake moves over board - currently treat is as dead
-			}else if (headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0)
+			}else if (headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0){
 				alive=0;
 				//TODO: play dead sound here
 			}
@@ -82,14 +82,24 @@ void game_loop(){
 void reorder_snake(int head[], int grow){
 	
 	int counter = 0;	//current index to be shifted
-	int storedShift[2] = SNAKE_BODY[0] //used to shift the value
+	int storedShift[2]; //used to shift the value
+	storedShift[0] = SNAKE_BODY[0][0];
+	storedShift[1] = SNAKE_BODY[0][1];
+
+	int temp[2];
 	while(counter <= TAIL_INDEX){
 		//lagre count +1
 		//sette count +1 til verdien av count
 		//sette verdien til st
-		int temp[2] = SNAKE_BODY[counter+1];
-		SNAKE_BODY[counter+1] = storedShift;
-		storedShift = temp;
+		temp[0] = SNAKE_BODY[counter+1][0];
+		temp[1] = SNAKE_BODY[counter+1][1];
+		//
+		SNAKE_BODY[counter+1][0] = storedShift[0];
+		SNAKE_BODY[counter+1][1] = storedShift[1];
+		//
+		storedShift[0] = temp[0];
+		storedShift[1] = temp[1];
+		//
 		counter++;
 	}
 	if(grow){
