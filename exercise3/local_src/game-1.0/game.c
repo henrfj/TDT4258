@@ -208,15 +208,20 @@ void initialize_snake(int headPos[2]){
 	*/
 
 	//Head
-	SNAKE_BODY[0] = headPos;
-	BOARD[snakeBody[0][0]][SNAKE_BODY[0][1]] = 1;
+	SNAKE_BODY[0][0] = headPos[0];
+	SNAKE_BODY[0][1] = headPos[1];
+
+	BOARD[SNAKE_BODY[0][0]][SNAKE_BODY[0][1]] = 1;
 
 	//Middle
-	SNAKE_BODY[1] = [headPos[0] - 1, headPos[1]];
+	SNAKE_BODY[1][0] = headPos[0]-1;
+	SNAKE_BODY[1][1] = headPos[1];
+
 	BOARD[SNAKE_BODY[1][0]][SNAKE_BODY[1][1]] = 1;
 
 	//Tail
-	SNAKE_BODY[2] = [headPos[0] - 2, headPos[1]];
+	SNAKE_BODY[2][0] = headPos[0] - 2;
+	SNAKE_BODY[2][1] = headPos[1];
 	BOARD[SNAKE_BODY[2][0]][SNAKE_BODY[2][1]] = 1;
 	TAIL_INDEX = 2;
 }
