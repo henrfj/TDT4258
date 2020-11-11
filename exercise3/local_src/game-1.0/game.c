@@ -4,8 +4,9 @@ int main(int argc, char *argv[])
 {
 	screen_init();
 	//print_image(); //just test
-	print_test_board(); //just test
+	//print_test_board(); //just test
 
+	//test_gamepad_input();
 	game_loop();
 	screen_cleanup();
 	return 0;
@@ -34,7 +35,7 @@ void game_loop(){
 		//Spawns a single initial fruit
 		spawn_fruit();
 
-		int alive = 1;
+		alive = 1;
 		direction = RIGHT;
 		//for reorder_snake() solution, should be removed if not used
 		
@@ -68,7 +69,8 @@ void game_loop(){
 			}
 			reorder_snake(headPos, grow);
 			//TODO: Call function to update the board. Clear + push board
-			sleep(1);				//Framerate
+			print_gameboard(BOARD);
+			usleep(50);				//Framerate
 		}
 		
 		/*the user is dead, requires a keypress to restart the game */
@@ -248,8 +250,9 @@ void initialize_snake(int headPos[2]){
 }
 
 void print_board(){
-	for(int i = 0; i < BOARD_SIZE; i++){
-		for(int j = 0; j < BOARD_SIZE; j++){
+	uint16_t i, j;
+	for(i = 0; i < BOARD_SIZE; i++){
+		for(j = 0; j < BOARD_SIZE; j++){
 			printf("%d", BOARD[i][j]);
 		}
 	}

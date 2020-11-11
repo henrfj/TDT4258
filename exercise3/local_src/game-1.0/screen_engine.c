@@ -54,7 +54,7 @@ void print_sprite(const uint16_t *image,
 
 //x and y are in screen size
 #define BOARD(x,y) gameboard[(x/BOARD_RATIO)+(y/BOARD_RATIO)*BOARD_SIDE]
-void print_gameboard(const uint16_t *gameboard){
+void print_gameboard(uint16_t *gameboard){
     uint16_t i, j;
 
     for(i=0; i< SCREEN_X; i++){
@@ -96,7 +96,7 @@ void color_tile(uint16_t *gameboard, uint8_t x, uint8_t y){
 	uint16_t tileState = BOARD(x,y);
     if(tileState == 0){
         SCREEN(x, y) = BG_COLOR;
-    } else if (tileState == 1 || tileState == 2){
+    } else if (tileState == BOARD_SNAKE_BODY){
         SCREEN(x, y) = SNK_COLOR;
     } else if(x % BOARD_RATIO == 0 && y % BOARD_RATIO == 0) {
 		//here print sprites
@@ -106,7 +106,7 @@ void color_tile(uint16_t *gameboard, uint8_t x, uint8_t y){
 		if(tileState == 4) {
 			print_sprite(head, x, y);
 		}
-		if(tileState == 5) {
+		if(tileState == BOARD_APPLE) {
 			print_sprite(apple, x, y);
 		}
 	}

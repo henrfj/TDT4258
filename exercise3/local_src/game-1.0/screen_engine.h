@@ -26,12 +26,15 @@
 #define BOARD_SCREEN SCREEN_Y //projected on screen
 #define BOARD_RATIO (BOARD_SCREEN/BOARD_SIDE)
 
+#define BOARD_SNAKE_BODY 1
+#define BOARD_APPLE 2
+
 void screen_init();
 void screen_update(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 
 void print_image(); //test an image
 void print_sprite(const uint16_t *image, uint16_t off_x, uint16_t off_y);
-void print_gameboard(const uint16_t *image);
+void print_gameboard(uint16_t *image);
 void print_test_board();
 uint16_t color(uint16_t tileState);
 void color_tile(uint16_t *gameboard, uint8_t x, uint8_t y);
