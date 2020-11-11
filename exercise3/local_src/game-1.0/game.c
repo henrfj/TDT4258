@@ -116,6 +116,8 @@ void reorder_snake(int head[], int grow){
 
 	}
 	//adds new snake head to the BOARD
+	SNAKE_BODY[0][0] = head[0];
+	SNAKE_BODY[0][1] = head[1];
 	BOARD[head[0]][head[1]] = 1;
 
 }
