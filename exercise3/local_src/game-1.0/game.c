@@ -83,7 +83,7 @@ void reorder_snake(int head[], int keepTail){
 	int counter = 0;	//current index to be shifted
 	int storedShift[2]; //used to shift the value
 	while(counter <= TAIL_INDEX){
-		storedShift = SNAKE_BODY[count+1];
+		storedShift = SNAKE_BODY[counter+1];
 		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
 		counter++;
 	}
@@ -97,7 +97,7 @@ void reorder_snake(int head[], int keepTail){
 
 	}
 	//adds new snake head to the BOARD
-	BOARD[*head[0]][*head[1]] = 1;
+	BOARD[head[0]][head[1]] = 1;
 
 }
 
@@ -183,7 +183,7 @@ void spawn_fruit(){
 
 	//Seeding the rand function.
 	srand(time(0));
-	int x_pos, int y_pos;
+	int x_pos, y_pos;
 	x_pos = (rand() % (upper - lower + 1)) + lower; 
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	
@@ -218,4 +218,12 @@ void initialize_snake(int headPos[2]){
 	SNAKE_BODY[2] = [headPos[0] - 2, headPos[1]];
 	BOARD[SNAKE_BODY[2][0]][SNAKE_BODY[2][1]] = 1;
 	TAIL_INDEX = 2;
+}
+
+void print_board(){
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
+			printf(BOARD[i][j]);
+		}
+	}
 }
