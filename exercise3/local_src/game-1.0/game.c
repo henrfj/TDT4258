@@ -13,7 +13,6 @@ void game_loop(){
 	// same goes for global variables in the h file.
 	int alive;
 	int headPos[2];
-	int fruitPos[2];
 	int direction;
 	int keepTail;	//If it moves, new tail, if it grown, keep tail
 
@@ -43,7 +42,7 @@ void game_loop(){
 			keepTail = false;
 
 			//snake eats fruit
-			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){ 
+			if(BOARD[headPos[0]][headPos[1]] == 2){ 
 				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
 				keepTail=true;
 				//TODO: play eating sound here
