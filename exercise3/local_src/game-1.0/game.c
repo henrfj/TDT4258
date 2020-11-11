@@ -20,7 +20,8 @@ void game_loop(){
 		//clear BOARD, set alive
 		//clears the BOARD
 		BOARD = {0}{0};
-		headPos = [15, 15];
+		headPos[0] = 15;
+		headPos[1] = 15;
 
 		//Hardcode initial snakebody, draws on the board.
 		initialize_snake(headPos);
@@ -50,18 +51,18 @@ void game_loop(){
 
 			//snake crashes into itself
 			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
-			!(headPos[0] == SNAKE_BODY[Tail_INDEX][0] && headPos[1] == SNAKE_BODY[Tail_INDEX][1] )) //checks if the future head position is not the tail
+			!(headPos[0] == SNAKE_BODY[TAIL_INDEX][0] && headPos[1] == SNAKE_BODY[TAIL_INDEX][1] )) //checks if the future head position is not the tail
 			{
 				alive = 0;
 				
 				//TODO: play dead sound here
 
 			//Snake moves over board - currently treat is as dead
-			}else if ([headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0)
+			}else if (headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0)
 				alive=0;
 				//TODO: play dead sound here
 			}
-			reorder_snake(&head, keepTail)
+			reorder_snake(headPos, keepTail);
 			//TODO: Call function to update the board. Clear + push board
 			sleep(1);				//Framerate
 		}
@@ -107,21 +108,21 @@ int get_input(){
 
 	/* Always reference with the left gamepad */
 	if (CHECK_BTN(button_value, LEFT)) {
-		return LEFT
+		return LEFT;
 	} else if (CHECK_BTN(button_value, UPL)) {
-		return UPL
+		return UPL;
 	} else if (CHECK_BTN(button_value, RIGHTL)) {
-		return RIGHT
+		return RIGHT;
 	} else if (CHECK_BTN(button_value, DOWNL)) {
-		return DOWNL
+		return DOWNL;
 	} else if (CHECK_BTN(button_value, LEFTR)) {
-		return LEFT
+		return LEFT;
 	} else if (CHECK_BTN(button_value, UPR)) {
-		return UPL
+		return UPL;
 	} else if (CHECK_BTN(button_value, RIGHT)) {
-		return RIGHT
+		return RIGHT;
 	} else if (CHECK_BTN(button_value, DOWNR)) {
-		return DOWNL
+		return DOWNL;
 	}else{
 		//assume that this would be returned if no buttons are pressed? (right, Gabriele?)
 		return 0;
