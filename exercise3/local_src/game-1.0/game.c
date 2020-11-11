@@ -13,7 +13,6 @@ void game_loop(){
 	// same goes for global variables in the h file.
 	int alive;
 	int headPos[2];
-	int fruitPos[2];
 	int direction;
 	int grow;	//If it moves, new tail, if it grown, keep tail
 
@@ -21,7 +20,8 @@ void game_loop(){
 		//clear BOARD, set alive
 		//clears the BOARD
 		BOARD = {0}{0};
-		headPos = [15, 15];
+		headPos[0] = 15;
+		headPos[1] = 15;
 
 		//Hardcode initial snakebody, draws on the board.
 		initialize_snake(headPos);
@@ -42,7 +42,7 @@ void game_loop(){
 			grow = FALSE;
 
 			//snake eats fruit
-			if(headPos[0] == fruitPos[0] && headPos[1] == fruitPos[1] ){ 
+			if(BOARD[headPos[0]][headPos[1]] == 2){ 
 				BOARD[headPos[0]][headPos[1]] == 1; // adds the new snake head to the BOARD(hence increasing the snake)
 				grow=TRUE;
 				//TODO: play eating sound here
@@ -50,19 +50,19 @@ void game_loop(){
 
 			//snake crashes into itself
 			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
-			!(headPos[0] == SNAKE_BODY[Tail_INDEX][0] && headPos[1] == SNAKE_BODY[Tail_INDEX][1] )) //checks if the future head position is not the tail
+			!(headPos[0] == SNAKE_BODY[TAIL_INDEX][0] && headPos[1] == SNAKE_BODY[TAIL_INDEX][1] )) //checks if the future head position is not the tail
 			{
 				alive = 0;
 				
 				//TODO: play dead sound here
 
 			//Snake moves over board - currently treat is as dead
-			}else if ([headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0)
+			}else if (headPos[0] > BOARD_SIZE || headPos[0] < 0 || headPos[0] > BOARD_SIZE || headPos[0] < 0)
 				alive=0;
 				//TODO: play dead sound here
 			}
-			reorder_snake(&head, grow);
-			print_gameboard(BOARD);
+			reorder_snake(headPos, keepTail);
+			//TODO: Call function to update the board. Clear + push board
 			sleep(1);				//Framerate
 		}
 		
@@ -83,7 +83,7 @@ void reorder_snake(int head[], int grow){
 	int counter = 0;	//current index to be shifted
 	int storedShift[2]; //used to shift the value
 	while(counter <= TAIL_INDEX){
-		storedShift = SNAKE_BODY[count+1];
+		storedShift = SNAKE_BODY[counter+1];
 		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
 		counter++;
 	}
@@ -97,7 +97,7 @@ void reorder_snake(int head[], int grow){
 
 	}
 	//adds new snake head to the BOARD
-	BOARD[*head[0]][*head[1]] = 1;
+	BOARD[head[0]][head[1]] = 1;
 
 }
 
@@ -107,21 +107,21 @@ int get_input(){
 
 	/* Always reference with the left gamepad */
 	if (CHECK_BTN(button_value, LEFT)) {
-		return LEFT
+		return LEFT;
 	} else if (CHECK_BTN(button_value, UPL)) {
-		return UPL
+		return UPL;
 	} else if (CHECK_BTN(button_value, RIGHTL)) {
-		return RIGHT
+		return RIGHT;
 	} else if (CHECK_BTN(button_value, DOWNL)) {
-		return DOWNL
+		return DOWNL;
 	} else if (CHECK_BTN(button_value, LEFTR)) {
-		return LEFT
+		return LEFT;
 	} else if (CHECK_BTN(button_value, UPR)) {
-		return UPL
+		return UPL;
 	} else if (CHECK_BTN(button_value, RIGHT)) {
-		return RIGHT
+		return RIGHT;
 	} else if (CHECK_BTN(button_value, DOWNR)) {
-		return DOWNL
+		return DOWNL;
 	}else{
 		//assume that this would be returned if no buttons are pressed? (right, Gabriele?)
 		return 0;
@@ -204,15 +204,28 @@ void initialize_snake(int headPos[2]){
 	*/
 
 	//Head
-	SNAKE_BODY[0] = headPos;
-	BOARD[snakeBody[0][0]][SNAKE_BODY[0][1]] = 1;
+	SNAKE_BODY[0][0] = headPos[0];
+	SNAKE_BODY[0][1] = headPos[1];
+
+	BOARD[SNAKE_BODY[0][0]][SNAKE_BODY[0][1]] = 1;
 
 	//Middle
-	SNAKE_BODY[1] = [headPos[0] - 1, headPos[1]];
+	SNAKE_BODY[1][0] = headPos[0]-1;
+	SNAKE_BODY[1][1] = headPos[1];
+
 	BOARD[SNAKE_BODY[1][0]][SNAKE_BODY[1][1]] = 1;
 
 	//Tail
-	SNAKE_BODY[2] = [headPos[0] - 2, headPos[1]];
+	SNAKE_BODY[2][0] = headPos[0] - 2;
+	SNAKE_BODY[2][1] = headPos[1];
 	BOARD[SNAKE_BODY[2][0]][SNAKE_BODY[2][1]] = 1;
 	TAIL_INDEX = 2;
+}
+
+void print_board(){
+	for(int i = 0; i < BOARD_SIZE; i++){
+		for(int j = 0; j < BOARD_SIZE; j++){
+			printf(BOARD[i][j]);
+		}
+	}
 }
