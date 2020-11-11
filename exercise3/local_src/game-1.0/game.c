@@ -63,7 +63,7 @@ void game_loop(){
 				//TODO: play dead sound here
 
 			//Snake moves over board - currently treat is as dead
-			}else if (headPos[0] > BOARD_SIZE-1 || headPos[0] < 0 || headPos[0] >= BOARD_SIZE-1 || headPos[0] < 0){
+			}else if (headPos[0] >= BOARD_SIZE || headPos[0] < 0 || headPos[1] >= BOARD_SIZE || headPos[1] < 0){
 				alive=0;
 				//TODO: play dead sound here
 			}
