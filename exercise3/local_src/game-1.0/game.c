@@ -82,10 +82,14 @@ void game_loop(){
 void reorder_snake(int head[], int grow){
 	
 	int counter = 0;	//current index to be shifted
-	int storedShift[2]; //used to shift the value
+	int storedShift[2] = SNAKE_BODY[0] //used to shift the value
 	while(counter <= TAIL_INDEX){
-		storedShift = SNAKE_BODY[counter+1];
-		SNAKE_BODY[counter+1] = SNAKE_BODY[counter];
+		//lagre count +1
+		//sette count +1 til verdien av count
+		//sette verdien til st
+		int temp[2] = SNAKE_BODY[counter+1];
+		SNAKE_BODY[counter+1] = storedShift;
+		storedShift = temp;
 		counter++;
 	}
 	if(grow){
