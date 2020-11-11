@@ -174,13 +174,17 @@ int snake_direction(int direction){
 void snake_movement(int headPos[2], int direction){
 	/*Sets new snakeHEAD postition, based on direction */
 	if(direction==LEFT){
-		headPos[0]--;
-	}else if (direction == RIGHT){
-		headPos[0]++;
-	}else if(direction == UPL){
-		headPos[1]++;
-	}else if(direction == DOWNL){
+		//headPos[0]--;
 		headPos[1]--;
+	}else if (direction == RIGHT){
+		//headPos[0]++;
+		headPos[1]++;
+	}else if(direction == UPL){
+		//headPos[1]++;
+		headPos[0]--;
+	}else if(direction == DOWNL){
+		//headPos[1]--;
+		headPos[0]++;
 	}
 }
 
