@@ -3,10 +3,6 @@
 int main(int argc, char *argv[])
 {
 	screen_init();
-	//print_image(); //just test
-	//print_test_board(); //just test
-
-	//test_gamepad_input();
 	game_loop();
 	screen_cleanup();
 	return 0;
@@ -14,31 +10,35 @@ int main(int argc, char *argv[])
 
 void game_loop(){
 
-	/*Determine reoccuring game variables*/
-	// same goes for global variables in the h file.
-	uint8_t alive;
-	uint16_t headPos[2];
-	uint8_t direction;
-	uint8_t grow;	//If it moves, new tail, if it grown, keep tail
+	/*Reoccuring game variables */
+
+	uint8_t alive; 		//determins if the snake is alive or not
+	uint16_t headPos[2];//position of the snake head
+	uint8_t direction;  //The direction of the snake
+	uint8_t grow;		//Determins if the snake grows or not
 
 	/*Main loop, which is used to reset the game */
 	while(1){
-		//clear BOARD, set alive
-		//clears the BOARD
+		
+		//clears board
 		memset(BOARD, 0, sizeof(uint16_t)*BOARD_SIZE*BOARD_SIZE);
+
+		//resets head position and direction
 		headPos[0] = 15;
 		headPos[1] = 15;
+		direction = RIGHT;
 
-		//Hardcode initial snakebody, draws on the board.
+		//intialize the snake body and drawis it to the board
 		initialize_snake(headPos);
 
-		//Spawns a single initial fruit
+		//Spawns an initial fruit
 		spawn_fruit();
 
+		//enables the alive loop
 		alive = 1;
-		direction = RIGHT;
 		
-		/*Gameloop, which runs until the snake is dead */
+		
+		/*Game loop, which runs until the snake is dead */
 		while(alive){
 
 			/* Checks if direction has changed, and if so, changes direction*/
@@ -48,10 +48,9 @@ void game_loop(){
 			/*checks if the new snake head position grows the snake or kills it.  */
 			grow = FALSE;
 
-			//snake eats fruit
+			//if snakehead is at a fruit position
 			if(BOARD[headPos[0]][headPos[1]] == 2){ 
 				grow=TRUE;
-				//TODO: play eating sound here
 				spawn_fruit(); //Spawn a new fruit
 
 			//snake crashes into itself (checks if the future head position is on a body part that is the tail)
@@ -71,14 +70,13 @@ void game_loop(){
 			usleep(50);				//Framerate
 		}
 		
-		/*the user is dead, requires a keypress to restart the game */
+		/*Game loop for when the snake is dead, waits for input to restart.*/
 		while(alive == 0){
 			if (get_input() != 0){
 				alive = 1;
 			}
 		}
 	}
-
 }
 
 /*
@@ -107,15 +105,14 @@ void reorder_snake(uint8_t head[], uint8_t grow){
 		counter++;
 	}
 	if(grow){
-		//snake ate fruit, increase tail index to keep the tail after the shift.
+		//Snake ate fruit -> increase tail index to keep the tail after the shift.
 		TAIL_INDEX++;
 	}else{
-		//snake did not eat fruit, wipe the old tail
+		//Snake did not eat fruit -> clear the old tail
 		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]][SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
 		
 
 	}
-
 	//adds new snake head to the BOARD
 	SNAKE_BODY[0][0] = head[0];
 	SNAKE_BODY[0][1] = head[1];
@@ -123,7 +120,7 @@ void reorder_snake(uint8_t head[], uint8_t grow){
 
 }
 
-
+/*Fetches the input from the button*/
 uint8_t get_input(){
 	uint8_t button_value = read_button_value();
 
@@ -149,6 +146,7 @@ uint8_t get_input(){
 	}
 }
 
+/*Fetches new directin based on buttoninput and past direction*/
 uint8_t snake_direction(uint8_t direction){
 
 	//Get a new directional input from the gamepad	
@@ -156,15 +154,15 @@ uint8_t snake_direction(uint8_t direction){
 
 	//Checks if it is a leagal move, can only move 90 degree, not 180
 	if (newDirection == 0){
-		//No change
+		// Illegal move -> no change
 		return direction;
 	} else if ((newDirection==LEFT && direction==RIGHT) ||
 	 (newDirection==RIGHT && direction==LEFT)){
-		//No change
+		// Illegal move -> no change
 		return direction;
 	}else if((newDirection==UPL && direction==DOWNL) ||
 	 (newDirection==DOWNL && direction==UPL)){
-		//No change
+		// Illegal move -> no change
 		return direction;
 
 	}
@@ -172,7 +170,7 @@ uint8_t snake_direction(uint8_t direction){
 	return newDirection;
 }
 
-/*Sets new snakeHEAD postition, based on direction */
+/*Sets new head postition, based on direction */
 void snake_movement(uint8_t headPos[2], uint8_t direction){
 	//calibrated to give the correct result on the screen.
 	if(direction==LEFT){
