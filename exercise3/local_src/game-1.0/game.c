@@ -15,7 +15,6 @@ int main(int argc, char *argv[])
 void game_loop(){
 
 	/*Determine reoccuring game variables*/
-	//TODO: can change the sizes of the variables, to not waste so much
 	// same goes for global variables in the h file.
 	uint8_t alive;
 	uint16_t headPos[2];

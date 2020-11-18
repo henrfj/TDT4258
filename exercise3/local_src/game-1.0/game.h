@@ -23,11 +23,11 @@ uint16_t TAIL_INDEX;
 /////////////////////////////
 void game_loop();
 int get_input();
-void reorder_snake(int head[], int grow);
+void reorder_snake(uint8_t head[], uint8_t grow);
 int spawn_fruit();
-void initialize_snake(int headPos[2]);
-int snake_direction(int direction);
-void snake_movement(int headPos[2], int direction);
+void initialize_snake(uint8_t headPos[2]);
+int snake_direction(uint8_t direction);
+void snake_movement(uint8_t headPos[2], uint8_t direction);
 void print_board();
 /////////////////////////////
 #endif
