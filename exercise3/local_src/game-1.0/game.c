@@ -22,23 +22,24 @@ void game_loop(){
 	int direction;
 	int grow;	//If it moves, new tail, if it grown, keep tail
 
+	/*Main loop, which is used to reset the game */
 	while(1){
 		//clear BOARD, set alive
 		//clears the BOARD
-		//BOARD = {0}{0};
 		memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
 		headPos[0] = 15;
 		headPos[1] = 15;
 
 		//Hardcode initial snakebody, draws on the board.
 		initialize_snake(headPos);
+
 		//Spawns a single initial fruit
 		spawn_fruit();
 
 		alive = 1;
 		direction = RIGHT;
-		//for reorder_snake() solution, should be removed if not used
 		
+		/*Gameloop, which runs until the snake is dead */
 		while(alive){
 
 			/* Checks if direction has changed, and if so, changes direction*/
@@ -54,18 +55,16 @@ void game_loop(){
 				//TODO: play eating sound here
 				spawn_fruit(); //Spawn a new fruit
 
-			//snake crashes into itself
+			//snake crashes into itself (checks if the future head position is on a body part that is the tail)
 			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
-			!(headPos[0] == SNAKE_BODY[TAIL_INDEX][0] && headPos[1] == SNAKE_BODY[TAIL_INDEX][1] )) //checks if the future head position is not the tail
+			!(headPos[0] == SNAKE_BODY[TAIL_INDEX][0] && headPos[1] == SNAKE_BODY[TAIL_INDEX][1] )) 
 			{
 				alive = 0;
-				
-				//TODO: play dead sound here
 
 			//Snake moves over board - currently treat is as dead
-			}else if (headPos[0] >= BOARD_SIZE || headPos[0] < 0 || headPos[1] >= BOARD_SIZE || headPos[1] < 0){
+			}else if (headPos[0] > BOARD_SIZE-1 || headPos[0] < 0 || headPos[0] >= BOARD_SIZE-1 || headPos[0] < 0){
+				
 				alive=0;
-				//TODO: play dead sound here
 			}
 			reorder_snake(headPos, grow);
 			//TODO: Call function to update the board. Clear + push board
@@ -83,8 +82,8 @@ void game_loop(){
 
 }
 
-//keeps track of all the snake body positions. snakebody is index shifted by 1, new head is placed at 0,
-// and TAIL_INDEX is increased if grow is true(simulating eating)
+/*keeps track of all the snake body positions. Elements in snakebody are index shifted by 1. The new head is placed at index 0,
+and TAIL_INDEX is increased if grow is true, causing the the original tail to not be removed. */
 void reorder_snake(int head[], int grow){
 	
 	int counter = 0;	//current index to be shifted
@@ -94,9 +93,7 @@ void reorder_snake(int head[], int grow){
 
 	int temp[2];
 	while(counter <= TAIL_INDEX){
-		//lagre count +1
-		//sette count +1 til verdien av count
-		//sette verdien til st
+		//
 		temp[0] = SNAKE_BODY[counter+1][0];
 		temp[1] = SNAKE_BODY[counter+1][1];
 		//
@@ -114,9 +111,10 @@ void reorder_snake(int head[], int grow){
 	}else{
 		//snake did not eat fruit, wipe the old tail
 		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]][SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
-		//SNAKE_BODY[TAIL_INDEX+1] = {-1};  unneccessary, as TAIL_INDEX makes all data beyond unused.
+		
 
 	}
+
 	//adds new snake head to the BOARD
 	SNAKE_BODY[0][0] = head[0];
 	SNAKE_BODY[0][1] = head[1];
@@ -146,7 +144,6 @@ int get_input(){
 	} else if (CHECK_BTN(button_value, DOWNR)) {
 		return DOWNL;
 	}else{
-		//assume that this would be returned if no buttons are pressed? (right, Gabriele?)
 		return 0;
 	}
 }
@@ -249,6 +246,9 @@ void initialize_snake(int headPos[2]){
 	TAIL_INDEX = 2;
 }
 
+/**
+ * Testfunction for printing the board as a string
+*/
 void print_board(){
 	uint16_t i, j;
 	for(i = 0; i < BOARD_SIZE; i++){
