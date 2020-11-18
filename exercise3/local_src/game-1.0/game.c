@@ -43,15 +43,19 @@ void game_loop(){
 
 			/* Checks if direction has changed, and if so, changes direction*/
 			direction = snake_direction(direction);
+			
 			/* Moves the snake in the current direction*/
 			snake_movement(headPos, direction);
-			/*checks if the new snake head position grows the snake or kills it.  */
+			
 			grow = FALSE;
 
-			//if snakehead is at a fruit position
+
+			/*checks if the new snake head position grows the snake or kills it.  */
+
+			//Snakehead is at a fruit position
 			if(BOARD[headPos[0]][headPos[1]] == 2){ 
 				grow=TRUE;
-				spawn_fruit(); //Spawn a new fruit
+				spawn_fruit(); 
 
 			//snake crashes into itself (checks if the future head position is on a body part that is the tail)
 			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
@@ -64,10 +68,16 @@ void game_loop(){
 				
 				alive=0;
 			}
+
+			//perform the move
 			reorder_snake(headPos, grow);
-			//TODO: Call function to update the board. Clear + push board
+
+		
+			//draws the graphical board
 			print_gameboard(BOARD);
-			usleep(50);				//Framerate
+
+			//Framerate
+			usleep(50);	
 		}
 		
 		/*Game loop for when the snake is dead, waits for input to restart.*/
