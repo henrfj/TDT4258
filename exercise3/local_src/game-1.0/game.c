@@ -17,16 +17,16 @@ void game_loop(){
 	/*Determine reoccuring game variables*/
 	//TODO: can change the sizes of the variables, to not waste so much
 	// same goes for global variables in the h file.
-	int alive;
-	int headPos[2];
-	int direction;
-	int grow;	//If it moves, new tail, if it grown, keep tail
+	uint8_t alive;
+	uint16_t headPos[2];
+	uint8_t direction;
+	uint8_t grow;	//If it moves, new tail, if it grown, keep tail
 
 	/*Main loop, which is used to reset the game */
 	while(1){
 		//clear BOARD, set alive
 		//clears the BOARD
-		memset(BOARD, 0, sizeof(int)*BOARD_SIZE*BOARD_SIZE);
+		memset(BOARD, 0, sizeof(uint16_t)*BOARD_SIZE*BOARD_SIZE);
 		headPos[0] = 15;
 		headPos[1] = 15;
 
@@ -82,16 +82,18 @@ void game_loop(){
 
 }
 
-/*keeps track of all the snake body positions. Elements in snakebody are index shifted by 1. The new head is placed at index 0,
-and TAIL_INDEX is increased if grow is true, causing the the original tail to not be removed. */
-void reorder_snake(int head[], int grow){
+/*
+keeps track of all the snake body positions. Elements in snakebody are index shifted by 1. The new head is placed at index 0,
+and TAIL_INDEX is increased if grow is true, causing the the original tail to not be removed.
+*/
+void reorder_snake(uint8_t head[], uint8_t grow){
 	
-	int counter = 0;	//current index to be shifted
-	int storedShift[2]; //used to shift the value
+	uint16_t counter = 0;	//current index to be shifted
+	uint8_t storedShift[2]; //used to shift the value
 	storedShift[0] = SNAKE_BODY[0][0];
 	storedShift[1] = SNAKE_BODY[0][1];
 
-	int temp[2];
+	uint8_t temp[2];
 	while(counter <= TAIL_INDEX){
 		//
 		temp[0] = SNAKE_BODY[counter+1][0];
@@ -123,7 +125,7 @@ void reorder_snake(int head[], int grow){
 }
 
 
-int get_input(){
+uint8_t get_input(){
 	uint8_t button_value = read_button_value();
 
 	/* Always reference with the left gamepad */
@@ -148,10 +150,10 @@ int get_input(){
 	}
 }
 
-int snake_direction(int direction){
+uint8_t snake_direction(uint8_t direction){
 
 	//Get a new directional input from the gamepad	
-	int newDirection = get_input();
+	uint8_t newDirection = get_input();
 
 	//Checks if it is a leagal move, can only move 90 degree, not 180
 	if (newDirection == 0){
@@ -171,45 +173,44 @@ int snake_direction(int direction){
 	return newDirection;
 }
 
-void snake_movement(int headPos[2], int direction){
-	/*Sets new snakeHEAD postition, based on direction */
+/*Sets new snakeHEAD postition, based on direction */
+void snake_movement(uint8_t headPos[2], uint8_t direction){
+	//calibrated to give the correct result on the screen.
 	if(direction==LEFT){
-		//headPos[0]--;
 		headPos[1]--;
 	}else if (direction == RIGHT){
-		//headPos[0]++;
 		headPos[1]++;
 	}else if(direction == UPL){
-		//headPos[1]++;
 		headPos[0]--;
 	}else if(direction == DOWNL){
-		//headPos[1]--;
 		headPos[0]++;
 	}
 }
 
-int spawn_fruit(){
-	/*
+
+/*
 	Spawns a single fruit at a random location on the BOARD.
 	Only spawns fruit in a free spot. 
 	Finds a random x and y position on the BOARD, and draws a 2 = a fruit
-	*/
+*/
+int spawn_fruit(){
+	
 
 	/* 
 	Setting upper and lower bound of the rand-function.
 	This will be indexes, so subracting one from board size
 	*/
-	int upper = BOARD_SIZE - 1;
-	int lower = 0;
+	uint8_t upper = BOARD_SIZE - 1;
+	uint8_t lower = 0;
 
 	//Seeding the rand function.
 	srand(time(0));
-	int x_pos, y_pos;
+	uint8_t x_pos, y_pos;
 	x_pos = (rand() % (upper - lower + 1)) + lower; 
 	y_pos = (rand() % (upper - lower + 1)) + lower; 
 	
 	if  (BOARD[x_pos][y_pos] == 0){
-		//Fruits are represented as a 2 on the board
+		//adds the fruit to the board (2 represent fruit)
 		BOARD[x_pos][y_pos] = 2;
 		return 1;
 
@@ -221,27 +222,29 @@ int spawn_fruit(){
 
 }
 
-void initialize_snake(int headPos[2]){
-	/*
+
+/*
 	Hardcode the new snakebody onto the board.
 	Uses headposition, and draws a three-sized snake.
-	*/
-
-	//Head
+*/
+void initialize_snake(uint8_t headPos[2]){
+	
+	//Initialize head
 	SNAKE_BODY[0][0] = headPos[0];
 	SNAKE_BODY[0][1] = headPos[1];
 
 	BOARD[SNAKE_BODY[0][0]][SNAKE_BODY[0][1]] = 1;
 
-	//Middle
+	//Initialize Middle
 	SNAKE_BODY[1][0] = headPos[0]-1;
 	SNAKE_BODY[1][1] = headPos[1];
 
 	BOARD[SNAKE_BODY[1][0]][SNAKE_BODY[1][1]] = 1;
 
-	//Tail
+	//Initialize Head
 	SNAKE_BODY[2][0] = headPos[0] - 2;
 	SNAKE_BODY[2][1] = headPos[1];
+
 	BOARD[SNAKE_BODY[2][0]][SNAKE_BODY[2][1]] = 1;
 	TAIL_INDEX = 2;
 }
