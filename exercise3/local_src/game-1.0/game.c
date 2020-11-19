@@ -13,7 +13,7 @@ void game_loop(){
 	/*Reoccuring game variables */
 
 	uint8_t alive; 		//determins if the snake is alive or not
-	uint16_t headPos[2];//position of the snake head
+	int8_t headPos[2];//position of the snake head
 	uint8_t direction;  //The direction of the snake
 	uint8_t grow;		//Determins if the snake grows or not
 
@@ -52,29 +52,27 @@ void game_loop(){
 
 			/*checks if the new snake head position grows the snake or kills it.  */
 
-			//Snakehead is at a fruit position
-			if(BOARD[headPos[0]][headPos[1]] == 2){ 
-				grow=TRUE;
-				spawn_fruit(); 
-
+			//Snake moves over board - currently treat is as dead
+			if (headPos[0] >= BOARD_SIZE || headPos[0] < 0 || headPos[1] >= BOARD_SIZE || headPos[1] < 0){
+				alive=0;
 			//snake crashes into itself (checks if the future head position is on a body part that is the tail)
 			}else if (BOARD[headPos[0]][headPos[1]] == 1 &&
 			!(headPos[0] == SNAKE_BODY[TAIL_INDEX][0] && headPos[1] == SNAKE_BODY[TAIL_INDEX][1] )) 
 			{
 				alive = 0;
 
-			//Snake moves over board - currently treat is as dead
-			}else if (headPos[0] > BOARD_SIZE-1 || headPos[0] < 0 || headPos[0] >= BOARD_SIZE-1 || headPos[0] < 0){
-				
-				alive=0;
+			//Snakehead is at a fruit position
+			}else if(BOARD[headPos[0]][headPos[1]] == 2){ 
+				grow=TRUE;
+				spawn_fruit(); 
 			}
 
 			//perform the move
 			reorder_snake(headPos, grow);
 
 		
-			//draws the graphical board
-			print_gameboard(BOARD);
+			//draws the graphical board (there it's a linear array..)
+			print_gameboard((uint16_t *)BOARD);
 
 			//Framerate
 			usleep(20);
@@ -93,14 +91,14 @@ void game_loop(){
 keeps track of all the snake body positions. Elements in snakebody are index shifted by 1. The new head is placed at index 0,
 and TAIL_INDEX is increased if grow is true, causing the the original tail to not be removed.
 */
-void reorder_snake(uint8_t head[], uint8_t grow){
+void reorder_snake(int8_t head[], uint8_t grow){
 	
 	uint16_t counter = 0;	//current index to be shifted
-	uint8_t storedShift[2]; //used to shift the value
+	int8_t storedShift[2]; //used to shift the value
 	storedShift[0] = SNAKE_BODY[0][0];
 	storedShift[1] = SNAKE_BODY[0][1];
 
-	uint8_t temp[2];
+	int8_t temp[2];
 	while(counter <= TAIL_INDEX){
 		//
 		temp[0] = SNAKE_BODY[counter+1][0];
@@ -120,7 +118,6 @@ void reorder_snake(uint8_t head[], uint8_t grow){
 	}else{
 		//Snake did not eat fruit -> clear the old tail
 		BOARD[SNAKE_BODY[TAIL_INDEX+1][0]][SNAKE_BODY[TAIL_INDEX+1][1]] = 0;
-		
 
 	}
 	//adds new snake head to the BOARD
@@ -181,7 +178,7 @@ uint8_t snake_direction(uint8_t direction){
 }
 
 /*Sets new head postition, based on direction */
-void snake_movement(uint8_t headPos[2], uint8_t direction){
+void snake_movement(int8_t headPos[2], uint8_t direction){
 	//calibrated to give the correct result on the screen.
 	if(direction==LEFT){
 		headPos[1]--;
@@ -234,7 +231,7 @@ int spawn_fruit(){
 	Hardcode the new snakebody onto the board.
 	Uses headposition, and draws a three-sized snake.
 */
-void initialize_snake(uint8_t headPos[2]){
+void initialize_snake(int8_t headPos[2]){
 	
 	//Initialize head
 	SNAKE_BODY[0][0] = headPos[0];

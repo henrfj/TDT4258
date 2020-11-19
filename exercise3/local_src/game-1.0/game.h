@@ -22,12 +22,12 @@ uint16_t SNAKE_BODY[MAX_SNAKE][2];
 uint16_t TAIL_INDEX;
 /////////////////////////////
 void game_loop();
-int get_input();
-void reorder_snake(uint8_t head[], uint8_t grow);
+uint8_t get_input();
+void reorder_snake(int8_t head[], uint8_t grow);
 int spawn_fruit();
-void initialize_snake(uint8_t headPos[2]);
-int snake_direction(uint8_t direction);
-void snake_movement(uint8_t headPos[2], uint8_t direction);
+void initialize_snake(int8_t headPos[2]);
+uint8_t snake_direction(uint8_t direction);
+void snake_movement(int8_t headPos[2], uint8_t direction);
 void print_board();
 /////////////////////////////
 #endif
