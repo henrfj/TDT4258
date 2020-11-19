@@ -77,7 +77,7 @@ void game_loop(){
 			print_gameboard(BOARD);
 
 			//Framerate
-			usleep(50);	
+			usleep(20);
 		}
 		
 		/*Game loop for when the snake is dead, waits for input to restart.*/

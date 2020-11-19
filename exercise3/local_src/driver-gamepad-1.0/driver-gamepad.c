@@ -20,8 +20,14 @@ static struct file_operations fops = {
 	.open = gamepad_open,
 	.release = gamepad_release
 };
-char buttons_value; //FIXME put that somewhere else
+char buttons_value;
 
+/*
+ * Initialization of the hardware registers and kernel data structures.
+ * Here the kernel is instructed to create the character device and to
+ * export it as desired.
+ * A common IRQ handler is also registered to both the GPIO channels
+ */
 static int __init gamepad_init(void)
 {	
 	int err;
@@ -49,11 +55,13 @@ static int __init gamepad_init(void)
 
 	//character device allocations
 	
+	//Allocate the device by requesting MIN and MAJ numbers
 	err	= alloc_chrdev_region(&devno, 0, DEVCNT, DEVNAME);
 	if(err<0) {
 		printk(KERN_WARNING"Error while allocating the device (%d)\n", err);
 		return err;
 	}
+	//Initialize the character device with file operations (functions here defined)
 	cdev_init(&gamepad_cdev, &fops);
 	gamepad_cdev.owner = THIS_MODULE;
 	gamepad_cdev.ops = &fops;
@@ -62,12 +70,14 @@ static int __init gamepad_init(void)
 		printk(KERN_WARNING"Error while adding the char device %s (%d)\n", DEVNAME, err);
 	}
 
+	//create the device class to export it to the userspace
 	gamepad_cls = class_create(THIS_MODULE, DEVNAME);
 	if(!gamepad_cls) {
 		printk(KERN_WARNING"Error while creating the device class for %s\n", DEVNAME);
 		return -1;
 	}
 
+	//create the device character file
 	if(!device_create(gamepad_cls, NULL, devno, NULL, DEVNAME)) {
 		printk(KERN_WARNING"Error while creating the device for %s\n", DEVNAME);
 		return -1;
@@ -79,22 +89,36 @@ static int __init gamepad_init(void)
 	return 0;
 }
 
+/*
+ * Handler to read the buttons whenever they change and save the value in the global
+ * variable to allow it to be received by the user on read
+ */
 irqreturn_t handler(int irq, void *dev_id, struct pt_regs *regs){
 	buttons_value = *GPIO_PC_DIN;
 	*GPIO_IFC = *GPIO_IF;
 	return IRQ_HANDLED;
 }
 
+/*
+ * Function called while the device file is opened (nothing happens)
+ */
 static int gamepad_open(struct inode *inode, struct file *filp) {
 	//printk(KERN_INFO"Device file has been opened\n");
 	return 0;
 }
 
+/*
+ * Function called while the device file is closed (nothing happens)
+ */
 static int gamepad_release(struct inode *inode, struct file *filp) {
 	//printk(KERN_INFO"Device file has been closed\n");
 	return 0;
 }
 
+/*
+ * Function called while the device file is read.
+ * The byte containing the buttons values is passed to the user and any successive reads give EOF
+ */
 static ssize_t gamepad_read(struct file *filp, char __user *buff, size_t count, loff_t *offp) {
 	//buttons_value = *GPIO_PC_DIN; //TODO implement the interrupt to populate this (and remove this line)
 	if(*offp >= 1) return 0; //EOF
@@ -107,6 +131,10 @@ static ssize_t gamepad_read(struct file *filp, char __user *buff, size_t count, 
 	return 1;
 }
 
+/*
+ * Function called while the device file is written to
+ * Not really used, here just testing it's functionality by logging the received value
+ */
 static ssize_t gamepad_write(struct file *filp, const char __user *buff, size_t count, loff_t *offp) {
 	char val;
 	if(*offp >= 1) return 0; //EOF
@@ -141,6 +169,6 @@ static void __exit gamepad_cleanup(void)
 module_init(gamepad_init);
 module_exit(gamepad_cleanup);
 
-MODULE_DESCRIPTION("Small module, demo only, not very useful.");
+MODULE_DESCRIPTION("Module to read the buttons value");
 MODULE_LICENSE("GPL");
 

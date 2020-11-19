@@ -31,6 +31,8 @@ static char *sound_devnode(struct device *dev, umode_t *mode) {
  * code into a running kernel
  *
  * Returns 0 if successfull, otherwise -1
+ *
+ * Similar behaviour to the one in driver-gamepad, check that for details
  */
 
 static int __init sound_init(void)
@@ -130,6 +132,10 @@ static int sound_release(struct inode *inode, struct file *filp) {
 	return 0;
 }
 
+/*
+ * Function called while the device file is read
+ * Not really used, here just testing it's functionality by giving back some value
+ */
 #define READ_SIZE 3
 static ssize_t sound_read(struct file *filp, char __user *buff, size_t count, loff_t *offp) {
 	char val[READ_SIZE] = "0\n";
@@ -144,6 +150,12 @@ static ssize_t sound_read(struct file *filp, char __user *buff, size_t count, lo
 	return READ_SIZE;
 }
 
+/*
+ * Function called while the device file is written to
+ * Receive the data in a 32 bits packet (4 Bytes) and parse it, then
+ * push the data in the global data structures used to play the sound
+ * and when everyithing is done, start to play
+ */
 //buf must be 32 bits, first half is period then 8 bits ampl and 8 spd
 #define BUFSIZE 100
 #define UNPACK(buf,t,ampl,spd) *t=buf>>16; *ampl=(buf>>8)&0xff; *spd=buf&0xff
@@ -188,7 +200,7 @@ static void __exit sound_cleanup(void)
 module_init(sound_init);
 module_exit(sound_cleanup);
 
-MODULE_DESCRIPTION("Sound driver...");
+MODULE_DESCRIPTION("Sound driver");
 MODULE_LICENSE("GPL");
 
 //---------------------------------------
@@ -199,6 +211,13 @@ uint8_t amplitudes[MAX_SONG];
 uint8_t speeds[MAX_SONG];
 uint8_t length = 0;
 
+/*
+ * This function is triggered by the timer IRQ, set the required parameters
+ * for the DAC to play the current tone
+ * unlike the implementation in exercise 2, here we aren't using the frequency
+ * as the kernel is not really supposed to use floating point numbers, hence the
+ * period in us is used (more about this in the description).
+ */
 int play_song()
 {
 	static uint16_t i = 0;	//index of array in the song
@@ -215,15 +234,15 @@ int play_song()
 	}
 
 	/*
-		* the timer variable keeps track on how long the note has
-		* been playing, since the board's timer is set to vibrate
-		* with the note's frequency, the duration of timer depends
-		* on it (defined with the GET_DURATION, more in the header)
-		* in the beginning of a note, it's frequency is set to the
-		* timer, so that the produced sound matches it. When the
-		* expected duration has been reached, the next note is
-		* selected or the playback is stopped if the song is over.
-		*/
+	 * the timer variable keeps track on how long the note has
+	 * been playing, since the board's timer is set to vibrate
+	 * with the note's frequency, the duration of timer depends
+	 * on it (defined with the GET_DURATION, more in the header)
+	 * in the beginning of a note, it's frequency is set to the
+	 * timer, so that the produced sound matches it. When the
+	 * expected duration has been reached, the next note is
+	 * selected or the playback is stopped if the song is over.
+	 */
 	if (timer == 1) {
 		SET_PERIOD(period);	//set the new frequency on the timer
 		get_set_amplitude(GET_AMPL(ampl));
@@ -247,6 +266,9 @@ int play_song()
 	return ret;
 }
 
+/*
+ * getter and setter for the pseudo-global variable amplitude (used by the DAC)
+ */
 int get_set_amplitude(int mode)
 {
 	static int amp = BASE_AMPL;
@@ -257,6 +279,9 @@ int get_set_amplitude(int mode)
 	return amp = mode;
 }
 
+/*
+ * store song values in the global data structures
+ */
 void push_values(uint16_t period, uint8_t ampl, uint8_t speed) {
 	periods[length] = period;
 	speeds[length] = speed;

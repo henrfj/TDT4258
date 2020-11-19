@@ -28,6 +28,7 @@
 #define GET_DURATION(period, speed) (BEAT / (speed * period))
 
 // Set the bit in the clock register to enable-disable the timer
+// as the timer cannot be stopped, here its interrupt is disabled
 #define PLAY() (*TIMER3_IEN = 1)
 #define PAUSE() (*TIMER3_IEN = 0)
 

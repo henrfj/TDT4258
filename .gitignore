@@ -5,3 +5,10 @@
 
 # Exclude backup files
 *~
+
+# Exclude resource files
+*.jpg
+*.mid
+*.bmp
+*.png
+tags
